@@ -8,6 +8,6 @@ my_dense_graph = DenseGraph(4,
                         }
                       )
 
-print(my_graph.is_edge(1, 2))
-print(my_graph.is_edge(2, 1))
-print(my_graph.is_edge(4, 3))
+print(my_dense_graph.is_edge(1, 2))
+print(my_dense_graph.is_edge(2, 1))
+print(my_dense_graph.is_edge(4, 3))
