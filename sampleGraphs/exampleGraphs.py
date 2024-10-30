@@ -1,13 +1,25 @@
 from graphModels.denseGraph import DenseGraph
+from denseGraphTesters.denseGraphTester import DenseGraphTester
 
-my_dense_graph = DenseGraph(4,
-                      {
-                          1: {2: True, 3: False, 4: True},
-                          2: {3: True, 4: True},
-                          3: {4: False}
-                        }
-                      )
 
-print(my_dense_graph.is_edge(1, 2))
-print(my_dense_graph.is_edge(2, 1))
-print(my_dense_graph.is_edge(4, 3))
+def dense_graph_creator(edges, undirected):
+    vertices = []
+    for edge in edges:
+        for vertex in edge:
+            if vertex not in vertices:
+                vertices.append(vertex)
+
+    graph = [[False] * len(vertices) for _ in range(len(vertices))]
+    for edge in edges:
+        graph[edge[0]][edge[1]] = True
+        if undirected:
+            graph[edge[1]][edge[0]] = True
+    return DenseGraph(len(vertices), graph)
+
+
+dense_bipartite_graph = dense_graph_creator(
+    [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 0], [1, 4]],
+    True
+)
+tester = DenseGraphTester(dense_bipartite_graph, 1/6)
+print(tester.test_bipartiteness())

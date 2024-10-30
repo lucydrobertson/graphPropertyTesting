@@ -20,7 +20,7 @@ class DenseGraphTester:
         return DenseGraph(num_vertices, subgraph_adj_matrix)
 
     def test_bipartiteness(self):
-        num_select = 1/(self.epsilon ** 2)
+        num_select = int(1/(self.epsilon ** 2))
         vertices_chosen = [random.randint(0, self.graph.get_size()) for _ in range(num_select)]
         # remove duplicates, unlikely to be many when tester is used on large graph as intended
         vertices_chosen = list(set(vertices_chosen))
@@ -39,11 +39,10 @@ class DenseGraphTester:
                         if colouring[current] == colouring[n]:
                             return False
                     except KeyError:
+                        # if vertex n is not in the dictionary then it's not in the queue
+                        queue.append(n)
                         if colouring[current] == 0:
                             colouring[n] = 1
                         else:
                             colouring[n] = 0
-
-                if n not in queue:
-                    queue.append(n)
         return True
