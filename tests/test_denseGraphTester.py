@@ -15,6 +15,10 @@ class TestDenseGraphTester(TestCase):
 
     def test_test_bipartiteness(self):
         dense_bipartite_graph = dense_graph_creator([[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 0], [1, 4]], True)
-        tester = DenseGraphTester(dense_bipartite_graph, 0.5)
-        assert tester.test_bipartiteness()
+        bipartite_tester = DenseGraphTester(dense_bipartite_graph, 0.5)
+        assert bipartite_tester.test_bipartiteness()
 
+        dense_not_bipartite_graph = dense_graph_creator([[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 0], [1, 4],
+                                                         [1, 5], [0, 4], [1, 3]], True)
+        not_bipartite_tester = DenseGraphTester(dense_not_bipartite_graph, 0.5)
+        assert not not_bipartite_tester.test_bipartiteness()
