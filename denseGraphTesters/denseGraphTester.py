@@ -11,7 +11,7 @@ class DenseGraphTester:
     def construct_induced_subgraph(self, vertices):
         num_vertices = len(vertices)
         # construct an empty adjacency matrix
-        subgraph_adj_matrix = [[False] * num_vertices] * num_vertices
+        subgraph_adj_matrix = [[False] * num_vertices for _ in range(num_vertices)]
         # construct the subgraph adjacency matrix from the full graph
         # use x and y so that subgraph has vertices labelled 0 ... n
         for x in range(0, num_vertices):
@@ -36,7 +36,9 @@ class DenseGraphTester:
             for n in range(subgraph.get_size()):
                 if subgraph.is_edge(current, n):
                     try:
-                        if colouring[current] == colouring[n]:
+                        # need to ensure node isn't being compared to itself
+                        # as it always has an edge of length 0 to itself
+                        if current != n and colouring[current] == colouring[n]:
                             return False
                     except KeyError:
                         # if vertex n is not in the dictionary then it's not in the queue
