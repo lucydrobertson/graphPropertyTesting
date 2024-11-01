@@ -21,7 +21,7 @@ class DenseGraphTester:
 
     def test_bipartiteness(self):
         num_select = int(1/(self.epsilon ** 2))
-        vertices_chosen = [random.randint(0, self.graph.get_size()) for _ in range(num_select)]
+        vertices_chosen = [random.randrange(0, self.graph.get_size()) for _ in range(num_select)]
         # remove duplicates, unlikely to be many when tester is used on large graph as intended
         vertices_chosen = list(set(vertices_chosen))
         subgraph = self.construct_induced_subgraph(vertices_chosen)
@@ -48,3 +48,25 @@ class DenseGraphTester:
                         else:
                             colouring[n] = 0
         return True
+
+    def test_degree_regularity(self):
+        # select 1/e vertices, and estimate degree by making 1/e2 queries each
+        # if range is estimates if <= 0.02ev, accept else reject
+        num_select = int(1/self.epsilon)
+        vertices_chosen = [random.randrange(0, self.graph.get_size()) for _ in range(num_select)]
+        vertices_chosen = list(set(vertices_chosen))
+
+        degrees = []
+
+        # estimate degree
+        for v1 in vertices_chosen:
+            degree = 0
+            for v2 in vertices_chosen:
+                if self.graph.is_edge(v1, v2):
+                    degree += 1
+            degrees.append(degree)
+
+        # sort degrees in ascending order
+        degrees.sort()
+        degree_range = degrees[-1] - degrees[0]
+        return degree_range <= 0.02 * self.epsilon * self.graph.get_size()

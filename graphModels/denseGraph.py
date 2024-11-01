@@ -5,10 +5,7 @@ class DenseGraph:
         self.adj_matrix = adjacency_matrix
 
     def is_edge(self, v1, v2) -> bool:
-        if v1 == v2:
-            return True
-        else:
-            return self.adj_matrix[v1][v2]
+        return self.adj_matrix[v1][v2]
 
     def add_edge(self, v1, v2):
         self.adj_matrix[v1][v2] = True
