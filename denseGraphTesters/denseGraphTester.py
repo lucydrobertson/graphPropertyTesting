@@ -1,12 +1,29 @@
+import math
 import random
 
 from graphModels.denseGraph import DenseGraph
+
+
+def test_colouring(subgraph, colouring):
+    for v1 in range(0, subgraph.get_size()):
+        for v2 in range(0, subgraph.get_size()):
+            if subgraph.is_edge(v1, v2) and colouring[v1] == colouring[v2]:
+                return False
+    return True
 
 
 class DenseGraphTester:
     def __init__(self, graph, epsilon):
         self.graph = graph
         self.epsilon = epsilon
+
+    def select_vertices_from_graph(self, num_to_chose):
+        # choose correct number of vertices randomly from those in the graph
+        vertices_chosen = [random.randrange(0, self.graph.get_size()) for _ in range(num_to_chose)]
+        # remove duplicates by converting to a set then back to a list
+        # note that duplicates become less likely when the testers are used with large graphs as intended
+        vertices_chosen = list(set(vertices_chosen))
+        return vertices_chosen
 
     def construct_induced_subgraph(self, vertices):
         num_vertices = len(vertices)
@@ -21,9 +38,7 @@ class DenseGraphTester:
 
     def test_bipartiteness(self):
         num_select = int(1/(self.epsilon ** 2))
-        vertices_chosen = [random.randrange(0, self.graph.get_size()) for _ in range(num_select)]
-        # remove duplicates, unlikely to be many when tester is used on large graph as intended
-        vertices_chosen = list(set(vertices_chosen))
+        vertices_chosen = self.select_vertices_from_graph(num_select)
         subgraph = self.construct_induced_subgraph(vertices_chosen)
 
         # perform bfs to decide if subgraph is bipartite
@@ -53,8 +68,7 @@ class DenseGraphTester:
         # select 1/e vertices, and estimate degree by making 1/e2 queries each
         # if range is estimates if <= 0.02ev, accept else reject
         num_select = int(1/self.epsilon)
-        vertices_chosen = [random.randrange(0, self.graph.get_size()) for _ in range(num_select)]
-        vertices_chosen = list(set(vertices_chosen))
+        vertices_chosen = self.select_vertices_from_graph(num_select)
 
         degrees = []
 
@@ -70,3 +84,33 @@ class DenseGraphTester:
         degrees.sort()
         degree_range = degrees[-1] - degrees[0]
         return degree_range <= 0.02 * self.epsilon * self.graph.get_size()
+
+    def test_k_colourability(self, k):
+        pass
+        # choose k^2/e^3 * log(3k) vertices
+        # create induced subgraph and check if the induced subgraph is k-col
+        # if so then accept else reject
+        num_select = int(k**2 * math.log(3*k) / self.epsilon**3)
+        vertices_chosen = self.select_vertices_from_graph(num_select)
+        subgraph = self.construct_induced_subgraph(vertices_chosen)
+
+        # test k-colourability of subgraph naively
+        # generate each colouring and check if it's permissible
+        subgraph_size = subgraph.get_size()
+        for index in range(k**subgraph_size):
+            colouring = [0] * subgraph_size
+            # convert the index (number of colouring) into an array representing that colouring
+            # aka convert the index from base 10 to base k
+            col_index = -1
+            while index > 0:
+                colouring[col_index] = index % k
+                index = index // k
+                col_index -= 1
+            print(colouring)
+
+            # check if colouring works
+            if test_colouring(subgraph, colouring):
+                return True
+
+        # if we haven't returned yet then the graph is not k-colourable so return False
+        return False

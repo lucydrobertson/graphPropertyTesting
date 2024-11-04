@@ -1,6 +1,6 @@
 from unittest import TestCase
 from denseGraphCreator import dense_graph_creator
-from denseGraphTesters.denseGraphTester import DenseGraphTester
+from denseGraphTesters.denseGraphTester import DenseGraphTester, test_colouring
 
 
 def majority_test(test_func):
@@ -41,3 +41,17 @@ class TestDenseGraphTester(TestCase):
         not_degree_reg_graph = dense_graph_creator([[0, 2], [1, 2], [3, 2]], True)
         not_degree_reg_tester = DenseGraphTester(not_degree_reg_graph, 0.2)
         assert not majority_test(not_degree_reg_tester.test_degree_regularity)
+
+    def test_test_k_colourability(self):
+        dense_3_col_graph = dense_graph_creator([[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 0], [1, 4], [0, 4]], True)
+        # having to use epsilon > 1 to choose fraction of vertices due to polynomial factor k in algorithm when picking
+        tester = DenseGraphTester(dense_3_col_graph, 1.8)
+        assert tester.test_k_colourability(3)
+
+    def test_test_colouring(self):
+        graph = dense_graph_creator([[0, 1], [1, 2], [2, 0]], True)
+        true_colouring = [0, 1, 2]
+        assert test_colouring(graph, true_colouring)
+
+        false_colouring = [0, 0, 1]
+        assert not test_colouring(graph, false_colouring)
