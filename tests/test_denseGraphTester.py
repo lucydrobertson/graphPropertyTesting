@@ -7,7 +7,8 @@ def majority_test(test_func):
     outcomes = 0
     # tester should be correct with probability 2/3
     # so test 3 times and take majority decision to test alg correctness
-    for x in range(3):
+    for x in range(0, 3):
+        o = test_func()
         if test_func():
             outcomes += 1
     return outcomes >= 2
@@ -43,10 +44,18 @@ class TestDenseGraphTester(TestCase):
         assert not majority_test(not_degree_reg_tester.test_degree_regularity)
 
     def test_test_k_colourability(self):
-        dense_3_col_graph = dense_graph_creator([[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 0], [1, 4], [0, 4]], True)
+        dense_3_col_graph = dense_graph_creator(
+            [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 0], [1, 4], [0, 4]], True)
         # having to use epsilon > 1 to choose fraction of vertices due to polynomial factor k in algorithm when picking
-        tester = DenseGraphTester(dense_3_col_graph, 1.8)
-        assert tester.test_k_colourability(3)
+        three_col_tester = DenseGraphTester(dense_3_col_graph, 1.8)
+        three_col_func = lambda: three_col_tester.test_k_colourability(3)
+        assert majority_test(three_col_func)
+
+        dense_not_3_col_graph = dense_graph_creator(
+            [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 0], [1, 4], [0, 4], [1, 5], [1, 3], [3, 0], [3, 5], [2, 5]], True)
+        not_3col_tester = DenseGraphTester(dense_not_3_col_graph, 1)
+        not_3col_func = lambda: not_3col_tester.test_k_colourability(3)
+        assert not majority_test(not_3col_func)
 
     def test_test_colouring(self):
         graph = dense_graph_creator([[0, 1], [1, 2], [2, 0]], True)

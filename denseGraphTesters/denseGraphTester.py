@@ -106,7 +106,6 @@ class DenseGraphTester:
                 colouring[col_index] = index % k
                 index = index // k
                 col_index -= 1
-            print(colouring)
 
             # check if colouring works
             if test_colouring(subgraph, colouring):
