@@ -1,4 +1,4 @@
-from graphModels.denseGraph import DenseGraph
+from DenseGraphs.denseGraph import DenseGraph
 
 
 def dense_graph_creator(edges, undirected):

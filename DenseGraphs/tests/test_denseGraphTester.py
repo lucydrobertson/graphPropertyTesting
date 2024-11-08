@@ -1,6 +1,6 @@
 from unittest import TestCase
 from denseGraphCreator import dense_graph_creator
-from denseGraphTesters.denseGraphTester import DenseGraphTester, test_colouring
+from DenseGraphs.denseGraphTester import DenseGraphTester, test_colouring
 
 
 def majority_test(test_func):

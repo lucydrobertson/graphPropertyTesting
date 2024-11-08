@@ -1,5 +1,5 @@
-from graphModels.denseGraph import DenseGraph
-from denseGraphTesters.denseGraphTester import DenseGraphTester
+from DenseGraphs.denseGraph import DenseGraph
+from DenseGraphs.denseGraphTester import DenseGraphTester
 
 
 def dense_graph_creator(edges, undirected):

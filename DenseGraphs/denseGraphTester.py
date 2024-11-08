@@ -1,7 +1,7 @@
 import math
 import random
 
-from graphModels.denseGraph import DenseGraph
+from DenseGraphs.denseGraph import DenseGraph
 
 
 def test_colouring(subgraph, colouring):
