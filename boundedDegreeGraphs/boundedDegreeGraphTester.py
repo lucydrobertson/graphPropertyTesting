@@ -1,7 +1,4 @@
 import math
-from operator import truediv
-
-from boundedDegreeGraphs.boundedDegreeGraph import BoundedDegreeGraph
 from random import randrange, choice
 
 
