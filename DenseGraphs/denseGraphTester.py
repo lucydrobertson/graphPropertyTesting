@@ -17,9 +17,9 @@ class DenseGraphTester:
         self.graph = graph
         self.epsilon = epsilon
 
-    def select_vertices_from_graph(self, num_to_chose):
+    def select_vertices_from_graph(self, num_to_choose):
         # choose correct number of vertices randomly from those in the graph
-        vertices_chosen = [random.randrange(0, self.graph.get_size()) for _ in range(num_to_chose)]
+        vertices_chosen = [random.randrange(0, self.graph.get_size()) for _ in range(num_to_choose)]
         # remove duplicates by converting to a set then back to a list
         # note that duplicates become less likely when the testers are used with large graphs as intended
         vertices_chosen = list(set(vertices_chosen))
