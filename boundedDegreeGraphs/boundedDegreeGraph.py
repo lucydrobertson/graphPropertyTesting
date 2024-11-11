@@ -29,7 +29,7 @@ class BoundedDegreeGraph:
             raise KeyError(f"The vertex {vertex}  or its neighbour {new_neighbour} is not present in the incidence function")
 
     def get_size(self):
-        return self.size()
+        return self.size
 
     def get_degree(self):
         return self.degree

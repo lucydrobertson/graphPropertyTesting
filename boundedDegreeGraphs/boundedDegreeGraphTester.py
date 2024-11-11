@@ -23,8 +23,9 @@ class BoundedDegreeGraphTester:
         reached_from_even = []
         reached_from_odd = []
 
-        current_vertex = v
+        # perform k random walks of length l, starting from vertex v each time
         for x in range(0, k):
+            current_vertex = v
             for path_length in range(1, l + 1):
                 # randomly select next vertex from neighbours
                 current_vertex = choice(self.graph.get_neighbours(current_vertex))
