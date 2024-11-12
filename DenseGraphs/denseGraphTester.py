@@ -86,7 +86,6 @@ class DenseGraphTester:
         return degree_range <= 0.02 * self.epsilon * self.graph.get_size()
 
     def test_k_colourability(self, k):
-        pass
         # choose k^2/e^3 * log(3k) vertices
         # create induced subgraph and check if the induced subgraph is k-col
         # if so then accept else reject
