@@ -54,3 +54,62 @@ class BoundedDegreeGraphTester:
             if self.odd_cycle(vertex):
                 return False
         return True
+
+    def breadth_first_search_find_cycle(self, starting_vertex, max_exploration):
+        # return cycle_found:bool, num_vertices_explored: int
+        to_explore = [starting_vertex]
+        explored = 0
+
+        added = {starting_vertex: starting_vertex}
+        # only explore the component up to size max_exploration, then return
+        while len(to_explore) > 0 and explored < max_exploration:
+            v = to_explore.pop(0)
+            neighbours = self.graph.get_neighbours(v)
+            # remove the vertex that added v from its neighbours, as it has already been explored
+            # and in an undirected graph, it will cause a cycle to be detected when no such cycle exists
+            if added[v] in neighbours:
+                neighbours.remove(added[v])
+
+            # store that vertex v added all of its neighbours to the to_explore queue
+            for n in neighbours:
+                added[n] = v
+
+            # add neighbours to list of vertices to explore
+            to_explore += neighbours
+            explored += 1
+            if starting_vertex in neighbours:
+                # then we have found a cycle so return True
+                return True, explored
+
+        # no cycle found so return False, number of vertices explored
+        return False, explored
+
+    def test_cycle_freeness(self):
+        # select l = O(1/e3) vertices
+        # perform bfs from each vertex s in l, until 8/ed vertices are reached
+        # or until no new vertices can be reached
+        # if any search finds a cycle, reject
+        # else let N be the number of vertices that had a component >= size 8/ed
+        # let M = 1/2 sum of degrees of N
+        # if (M-N)/L < ed/16 then accept else reject
+
+        vertices_chosen = self.choose_vertices(int(self.graph.get_size() / self.epsilon**3))
+
+        max_exploration = 8 / (self.epsilon * self.graph.get_degree())
+        vertices_reached = []
+        for s in vertices_chosen:
+            cycle_found, vertices_explored = self.breadth_first_search_find_cycle(s, max_exploration)
+            if cycle_found:
+                return False
+            else:
+                vertices_reached.append(vertices_explored)
+
+        # max_explored_vertices consists of all vertices chosen that were part of component of max size explored
+        max_explored_vertices = list(filter(lambda n: n >= max_exploration, vertices_reached))
+        # degree_list stores the degrees of each vertex in max_explored_vertices
+        degree_list = [len(self.graph.get_neighbours(v)) for v in max_explored_vertices]
+
+        N = len(max_explored_vertices)
+        M = 0.5 * sum(degree_list)
+        return (M - N)/len(vertices_chosen) < self.epsilon * self.graph.get_degree() / 16
+
