@@ -1,4 +1,3 @@
-from itertools import cycle
 from unittest import TestCase
 
 from boundedDegreeGraphs.boundedDegreeGraph import BoundedDegreeGraph

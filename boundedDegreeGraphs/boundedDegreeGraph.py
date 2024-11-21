@@ -33,3 +33,6 @@ class BoundedDegreeGraph:
 
     def get_degree(self):
         return self.degree
+
+    def get_directed(self):
+        return self.directed

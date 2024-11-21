@@ -1,6 +1,6 @@
 from unittest import TestCase
 from denseGraphCreator import dense_graph_creator
-from DenseGraphs.denseGraphTester import DenseGraphTester, test_colouring
+from DenseGraphs.denseGraphTester import DenseGraphTester, test_dense_colouring
 
 
 def majority_test(test_func):
@@ -60,7 +60,7 @@ class TestDenseGraphTester(TestCase):
     def test_test_colouring(self):
         graph = dense_graph_creator([[0, 1], [1, 2], [2, 0]], True)
         true_colouring = [0, 1, 2]
-        assert test_colouring(graph, true_colouring)
+        assert test_dense_colouring(graph, true_colouring)
 
         false_colouring = [0, 0, 1]
-        assert not test_colouring(graph, false_colouring)
+        assert not test_dense_colouring(graph, false_colouring)

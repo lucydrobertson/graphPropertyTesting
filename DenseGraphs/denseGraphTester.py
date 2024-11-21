@@ -2,9 +2,10 @@ import math
 import random
 
 from DenseGraphs.denseGraph import DenseGraph
+from create_k_colourings import generate_k_colourings
 
 
-def test_colouring(subgraph, colouring):
+def test_dense_colouring(subgraph, colouring):
     for v1 in range(0, subgraph.get_size()):
         for v2 in range(0, subgraph.get_size()):
             if subgraph.is_edge(v1, v2) and colouring[v1] == colouring[v2]:
@@ -96,18 +97,11 @@ class DenseGraphTester:
         # test k-colourability of subgraph naively
         # generate each colouring and check if it's permissible
         subgraph_size = subgraph.get_size()
-        for index in range(k**subgraph_size):
-            colouring = [0] * subgraph_size
-            # convert the index (number of colouring) into an array representing that colouring
-            # aka convert the index from base 10 to base k
-            col_index = -1
-            while index > 0:
-                colouring[col_index] = index % k
-                index = index // k
-                col_index -= 1
+        possible_colourings = generate_k_colourings(subgraph_size, k)
 
+        for colouring in possible_colourings:
             # check if colouring works
-            if test_colouring(subgraph, colouring):
+            if test_dense_colouring(subgraph, colouring):
                 return True
 
         # if we haven't returned yet then the graph is not k-colourable so return False
