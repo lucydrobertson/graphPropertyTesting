@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from boundedDegreeGraphs.boundedDegreeGraph import BoundedDegreeGraph
+from BoundedDegreeGraphs.boundedDegreeGraph import BoundedDegreeGraph
 
 
 class TestBoundedDegreeGraph(TestCase):

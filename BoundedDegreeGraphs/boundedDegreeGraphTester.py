@@ -1,13 +1,13 @@
 import math
 from random import randrange, choice
 
-from boundedDegreeGraph import BoundedDegreeGraph
+from BoundedDegreeGraphs.boundedDegreeGraph import BoundedDegreeGraph
 from create_k_colourings import generate_k_colourings
 
 
 def test_bd_colouring(colouring, graph: BoundedDegreeGraph):
-    for v1 in graph.get_size():
-        for v2 in graph.get_size():
+    for v1 in range(0, graph.get_size()):
+        for v2 in range(0, graph.get_size()):
             if v1 in graph.get_neighbours(v2) or v2 in graph.get_neighbours(v1):
                 if colouring[v1] == colouring[v2]:
                     return False
@@ -127,21 +127,23 @@ class BoundedDegreeGraphTester:
 
     def get_vertices_in_radius(self, start_vertex, distance):
         # return a list of all vertices reachable from start_vertex that are at most distance d away
-        reachable = {0: start_vertex}
+        reachable = {0: [start_vertex]}
         for d in range(0, distance):
             current_neighbours = []
             for vertex in reachable[d]:
-                current_neighbours.append(self.graph.get_neighbours(vertex))
+                current_neighbours += self.graph.get_neighbours(vertex)
             reachable[d+1] = list(set(current_neighbours))
 
         # condense dictionary into one list
-        vertices_in_radius = [reachable[k] for k in reachable.keys()]
+        vertices_in_radius = [v for k in reachable.keys() for v in reachable[k]]
+        # remove duplicates
+        vertices_in_radius = list(set(vertices_in_radius))
         return vertices_in_radius
 
     def create_induced_subgraph(self, subgraph_vertices):
         # return an induced subgraph that only includes the vertices present in subgraph_vertices
         incidence_function = {}
-        for vertex in range(0, subgraph_vertices):
+        for vertex in range(0, len(subgraph_vertices)):
             neighbours = self.graph.get_neighbours(subgraph_vertices[vertex])
             # filter neighbours so the list only includes neighbours present in the subgraph
             neighbours = [n for n in neighbours if n in subgraph_vertices]
@@ -163,13 +165,13 @@ class BoundedDegreeGraphTester:
         # accept if the subgraph G induced by U satisfies the property
 
         # picked random constants for now
-        s1 = int(self.graph.get_size() / 6)
+        s1 = int(self.graph.get_size() / 2)
         s2 = 2
 
         vertices_chosen = self.choose_vertices(s1)
         subgraph_vertices = []
         for v in vertices_chosen:
-            subgraph_vertices.append(self.get_vertices_in_radius(v, s2))
+            subgraph_vertices += self.get_vertices_in_radius(v, s2)
         subgraph_vertices = list(set(subgraph_vertices))
 
         subgraph = self.create_induced_subgraph(subgraph_vertices)
