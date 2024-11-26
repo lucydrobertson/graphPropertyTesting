@@ -13,6 +13,29 @@ def test_dense_colouring(subgraph, colouring):
     return True
 
 
+def decide_bipartiteness(graph):
+    # start from vertex 0, an arbitrary choice
+    queue = [0]
+    colouring = {0: 0}
+    while len(queue) > 0:
+        current = queue.pop(0)
+        for n in range(graph.get_size()):
+            if graph.is_edge(current, n):
+                try:
+                    # need to ensure node isn't being compared to itself
+                    # as it always has an edge of length 0 to itself
+                    if current != n and colouring[current] == colouring[n]:
+                        return False
+                except KeyError:
+                    # if vertex n is not in the dictionary then it's not in the queue
+                    queue.append(n)
+                    if colouring[current] == 0:
+                        colouring[n] = 1
+                    else:
+                        colouring[n] = 0
+    return True
+
+
 class DenseGraphTester:
     def __init__(self, graph, epsilon):
         self.graph = graph
@@ -44,26 +67,7 @@ class DenseGraphTester:
 
         # perform bfs to decide if subgraph is bipartite
         # 2-col == bipartite
-        # start from vertex 0, an arbitrary choice
-        queue = [0]
-        colouring = {0: 0}
-        while len(queue) > 0:
-            current = queue.pop(0)
-            for n in range(subgraph.get_size()):
-                if subgraph.is_edge(current, n):
-                    try:
-                        # need to ensure node isn't being compared to itself
-                        # as it always has an edge of length 0 to itself
-                        if current != n and colouring[current] == colouring[n]:
-                            return False
-                    except KeyError:
-                        # if vertex n is not in the dictionary then it's not in the queue
-                        queue.append(n)
-                        if colouring[current] == 0:
-                            colouring[n] = 1
-                        else:
-                            colouring[n] = 0
-        return True
+        return decide_bipartiteness(subgraph)
 
     def test_degree_regularity(self):
         # select 1/e vertices, and estimate degree by making 1/e2 queries each

@@ -12,6 +12,11 @@ class BoundedDegreeGraph:
             raise KeyError(f"The vertex {vertex} is not present in the incidence function")
 
     def add_neighbour(self, vertex, new_neighbour):
+        if vertex not in self.inc_func.keys():
+            self.inc_func[vertex] = []
+        if new_neighbour not in self.inc_func.keys():
+            self.inc_func[new_neighbour] = []
+
         try:
             # add in the new neighbour to an undirected graph
             # iff both the vertex and the new neighbour have space
