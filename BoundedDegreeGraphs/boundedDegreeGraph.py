@@ -9,7 +9,8 @@ class BoundedDegreeGraph:
         try:
             return self.inc_func[vertex]
         except KeyError:
-            raise KeyError(f"The vertex {vertex} is not present in the incidence function")
+            # return no neighbours if vertex is not in incidence function
+            return []
 
     def add_neighbour(self, vertex, new_neighbour):
         if vertex not in self.inc_func.keys():

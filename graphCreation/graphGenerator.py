@@ -25,7 +25,19 @@ class GraphGenerator:
         graph = BoundedDegreeGraph(graph_size, max_degree, {}, self.directed)
         for edge in graph_edges:
             graph.add_neighbour(edge[0], edge[1])
+        print(graph.inc_func)
         return graph
+
+    def decide_num_edges(self, size):
+        # edge generation
+        # generate p, the poly factor for the #edges, with a min value of 0.5 to ensure the graph has sufficient edges
+        p = random.uniform(0.5, 1)
+        if self.dense:
+            num_edges = int(p * size ** 2)
+        # for a sparse graph, have some p*nlogn edges
+        else:
+            num_edges = int(p * size * math.log2(size))
+        return num_edges
 
     def generate_bipartite_graph(self, size):
         # generate |size| nodes and probabilistically assign them to set a or set b
@@ -46,14 +58,7 @@ class GraphGenerator:
             else:
                 set_b.append(x)
 
-        # edge generation
-        # generate k, the poly factor for the #edges, with a min value of 0.5 to ensure the graph has sufficient edges
-        k = random.uniform(0.5, 1)
-        if self.dense:
-            num_edges = int(k * size**2)
-        # for a sparse graph, have some k*nlogn edges
-        else:
-            num_edges = int(k * size * math.log2(size))
+        num_edges = self.decide_num_edges(size)
 
         for e in range(0, num_edges):
             # for undirected graph, doesn't matter if start is in set_a or set_b
@@ -70,3 +75,29 @@ class GraphGenerator:
             # arbitrarily set max_degree to 5*log2(size of graph)
             # TO DO: decide if this is a good choice, maybe it should be a parameter??
             return self.convert_to_bounded_degree(size, math.log2(size)*5, bpt_graph_edges)
+
+    def generate_k_col_graph(self, size, k):
+        k_col_edges = []
+
+        node_sets = [[] for _ in range(0, k)]
+
+        # probabilistically assign nodes to one of the k sets
+        for x in range(0, size):
+            set_choice = random.randrange(0, k)
+            node_sets[set_choice].append(x)
+
+        num_edges = self.decide_num_edges(size)
+
+        for e in range(0, num_edges):
+            starting_set, ending_set = random.sample(node_sets, 2)
+            start_node = random.choice(starting_set)
+            ending_node = random.choice(ending_set)
+
+            k_col_edges.append([start_node, ending_node])
+
+        if self.dense:
+            return self.convert_to_dense(size, k_col_edges)
+        else:
+            # arbitrarily set max_degree to 5*log2(size of graph)
+            # TO DO: decide if this is a good choice, maybe it should be a parameter??
+            return self.convert_to_bounded_degree(size, math.log2(size)*5, k_col_edges)

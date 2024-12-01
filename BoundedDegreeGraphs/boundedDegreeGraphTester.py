@@ -5,7 +5,7 @@ from BoundedDegreeGraphs.boundedDegreeGraph import BoundedDegreeGraph
 from create_k_colourings import generate_k_colourings
 
 
-def test_bd_colouring(colouring, graph: BoundedDegreeGraph):
+def test_bd_colouring(graph, colouring):
     for v1 in range(0, graph.get_size()):
         for v2 in range(0, graph.get_size()):
             if v1 in graph.get_neighbours(v2) or v2 in graph.get_neighbours(v1):
@@ -181,6 +181,6 @@ class BoundedDegreeGraphTester:
         # then check if any colouring is k-colourable
         possible_colourings = generate_k_colourings(subgraph.get_size(), k)
         for colouring in possible_colourings:
-            if test_bd_colouring(colouring, subgraph):
+            if test_bd_colouring(subgraph, colouring):
                 return True
         return False

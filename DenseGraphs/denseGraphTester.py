@@ -96,6 +96,7 @@ class DenseGraphTester:
         # if so then accept else reject
         num_select = int(k**2 * math.log(3*k) / self.epsilon**3)
         vertices_chosen = self.select_vertices_from_graph(num_select)
+        print("vertices chosen ", vertices_chosen)
         subgraph = self.construct_induced_subgraph(vertices_chosen)
 
         # test k-colourability of subgraph naively
