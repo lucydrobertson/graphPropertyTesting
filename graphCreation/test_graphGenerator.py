@@ -51,3 +51,13 @@ class TestGraphGenerator(TestCase):
                     k_colourable = True
                     break
             assert k_colourable
+
+    def test_generate_degree_regular_graph(self):
+        # ran this for 10,000 iterations and it didn't fail so pretty sure the alg is correct
+        chosen_degree = 12
+        degree_reg_generator = GraphGenerator(False, False)
+        graph = degree_reg_generator.generate_degree_regular_graph(25, chosen_degree)
+
+        degrees = [len(node_neighbours) for node, node_neighbours in graph.inc_func.items()]
+        for d in degrees:
+            assert d == chosen_degree

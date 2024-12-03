@@ -101,3 +101,57 @@ class GraphGenerator:
             # arbitrarily set max_degree to 5*log2(size of graph)
             # TO DO: decide if this is a good choice, maybe it should be a parameter??
             return self.convert_to_bounded_degree(size, math.log2(size)*5, k_col_edges)
+
+    def generate_degree_regular_graph(self, size, degree):
+        # basic idea
+        # keep track of the current degree of every node
+        # add an edge between any two nodes that aren't yet of the correct degree
+        # repeat until every node is of the max degree or there is only one node left (failure??)
+        if size < degree + 1 or (size * degree) % 2 == 1:
+            raise Exception(f"It is not possible for a graph of size {size} and degree {degree} to be regular")
+        else:
+            edges = []
+
+            # stores if the current degree of a node
+            node_degrees = {n: 0 for n in range(0, size)}
+
+            # stores a list of nodes which haven't reached the max degree
+            not_max_degree_nodes = [n for n in range(0, size)]
+            while len(not_max_degree_nodes) > 0:
+                # pick two random nodes that aren't at max degree
+                # by definition of random.sample, node1 != node2
+                node1, node2 = random.sample(not_max_degree_nodes, 2)
+
+                edges.append((node1, node2))
+                node_degrees[node1] += 1
+                node_degrees[node2] += 1
+
+                # remove nodes from not max degree list if they now have the desired degree
+                for node in [node1, node2]:
+                    if node_degrees[node] == degree:
+                        not_max_degree_nodes.remove(node)
+
+                # it is possible that there is one node n left that is not of the desired degree
+                # in that case, remove one edge (e1, e2) at random
+                # and add new edges (n, e1) and (n, e2)
+                # TO DO: prove this works
+                if len(not_max_degree_nodes) == 1:
+                    leftover_node = not_max_degree_nodes.pop()
+                    while node_degrees[leftover_node] < degree:
+                        random_edge_index = random.randrange(0, len(edges))
+                        # don't want to remove an edge already including leftover node
+                        e1, e2 = edges[random_edge_index]
+                        if e1 != leftover_node and e2 != leftover_node:
+                            # remove the chosen edges from edges
+                            edges.pop(random_edge_index)
+                            # add in the two new required edges
+                            edges.append((e1, leftover_node))
+                            edges.append((e2, leftover_node))
+                            # update degree of leftover node
+                            node_degrees[leftover_node] += 2
+
+            if self.dense:
+                return self.convert_to_dense(size, edges)
+            else:
+                return self.convert_to_bounded_degree(size, degree, edges)
+
