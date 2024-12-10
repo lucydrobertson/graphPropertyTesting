@@ -1,3 +1,6 @@
+import networkx as nx
+import matplotlib.pyplot as plt
+
 class DenseGraph:
     def __init__(self, num_vertices, adjacency_matrix):
         self.size = num_vertices
@@ -12,3 +15,14 @@ class DenseGraph:
 
     def get_size(self):
         return self.size
+
+    def visualise_graph(self):
+        edges = []
+        for n1 in range(0, self.size):
+            for n2 in range(0, self.size):
+                if self.is_edge(n1, n2):
+                    edges.append((n1, n2))
+        graph = nx.Graph()
+        graph.add_edges_from(edges)
+        nx.draw_networkx(graph)
+        plt.show()

@@ -19,3 +19,7 @@ class TestDenseGraph(TestCase):
     def test_get_size(self):
         graph = dense_graph_creator([[0, 1], [1, 2], [2, 0], [2, 3]], True)
         assert graph.get_size() == 4
+
+    def test_visualise(self):
+        graph = dense_graph_creator([[0, 1], [1, 2], [2, 0], [2, 3]], True)
+        graph.visualise_graph()
