@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from BoundedDegreeGraphs.boundedDegreeGraphTester import test_bd_colouring
+from BoundedDegreeGraphs.boundedDegreeGraphTester import test_bd_colouring, BoundedDegreeGraphTester
 from DenseGraphs.denseGraphTester import decide_bipartiteness, DenseGraphTester, test_dense_colouring
 from create_k_colourings import generate_k_colourings
 from graphCreation.graphGenerator import GraphGenerator
@@ -53,7 +53,7 @@ class TestGraphGenerator(TestCase):
             assert k_colourable
 
     def test_generate_degree_regular_graph(self):
-        # ran this for 10,000 iterations and it didn't fail so pretty sure the alg is correct
+        # ran this for 10,000 iterations, and it didn't fail so pretty sure the alg is correct (:
         chosen_degree = 12
         degree_reg_generator = GraphGenerator(False, False)
         graph = degree_reg_generator.generate_degree_regular_graph(25, chosen_degree)
@@ -61,3 +61,11 @@ class TestGraphGenerator(TestCase):
         degrees = [len(node_neighbours) for node, node_neighbours in graph.inc_func.items()]
         for d in degrees:
             assert d == chosen_degree
+
+    def test_generate_cycle_free_graph(self):
+        cycle_free_generator = GraphGenerator(False, False)
+        graph = cycle_free_generator.generate_cycle_free_graph(25)
+
+        tester = BoundedDegreeGraphTester(graph, 1/6)
+        for x in range(100):
+            assert tester.test_cycle_freeness()

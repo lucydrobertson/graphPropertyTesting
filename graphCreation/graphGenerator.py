@@ -1,5 +1,6 @@
 import math
 import random
+from pyvis.network import Network
 
 from BoundedDegreeGraphs.boundedDegreeGraph import BoundedDegreeGraph
 from DenseGraphs.denseGraph import DenseGraph
@@ -155,3 +156,38 @@ class GraphGenerator:
             else:
                 return self.convert_to_bounded_degree(size, degree, edges)
 
+    def generate_cycle_free_graph(self, size):
+        # if dense, more children is fine, otherwise we want fewer children per node so just use the log value
+        if self.dense:
+            max_children_per_node = int(size / math.log(size, 2))
+        else:
+            max_children_per_node = int(math.log(size))
+
+        to_explore = [0]
+        edges = []
+        num_nodes_explored = 1
+        while len(to_explore) > 0 and num_nodes_explored < size:
+            current_node = to_explore.pop(0)
+            num_children = random.randint(1, max_children_per_node)
+            if num_nodes_explored + num_children > size:
+                num_children = size - num_nodes_explored
+            children = [x for x in range(num_nodes_explored, num_nodes_explored + num_children)]
+            for child in children:
+                edges.append((current_node, child))
+            num_nodes_explored += num_children
+            to_explore += children
+
+        # if there is an undirected graph, add in some narrowing (downwards edges)
+        if self.directed:
+            num_narrowing_edges = random.randint(0, max_children_per_node**2)
+            narrowing_edges = []
+            for _ in range(0, num_narrowing_edges):
+                n1 = random.randint(0, size)
+                n2 = random.randint(n1 + 1, size)
+                narrowing_edges.append((n1, n2))
+            edges += narrowing_edges
+
+        if self.dense:
+            return self.convert_to_dense(size, edges)
+        else:
+            return self.convert_to_bounded_degree(size, max_children_per_node ** 2, edges)
