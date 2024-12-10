@@ -1,6 +1,5 @@
 import math
 import random
-from pyvis.network import Network
 
 from BoundedDegreeGraphs.boundedDegreeGraph import BoundedDegreeGraph
 from DenseGraphs.denseGraph import DenseGraph

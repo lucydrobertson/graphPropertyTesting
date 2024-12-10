@@ -1,3 +1,7 @@
+import networkx as nx
+import matplotlib.pyplot as plt
+
+
 class BoundedDegreeGraph:
     def __init__(self, num_vertices, degree, incidence_function, directed):
         self.size = num_vertices
@@ -42,3 +46,13 @@ class BoundedDegreeGraph:
 
     def get_directed(self):
         return self.directed
+
+    def visualise_graph(self):
+        edges = []
+        for node, neighbours in self.inc_func.items():
+            for neighbour in neighbours:
+                edges.append((node, neighbour))
+        graph = nx.Graph()
+        graph.add_edges_from(edges)
+        nx.draw_networkx(graph)
+        plt.show()

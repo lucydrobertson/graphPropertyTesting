@@ -66,6 +66,9 @@ class TestGraphGenerator(TestCase):
         cycle_free_generator = GraphGenerator(False, False)
         graph = cycle_free_generator.generate_cycle_free_graph(25)
 
+        graph.visualise_graph()
+
         tester = BoundedDegreeGraphTester(graph, 1/6)
         for x in range(100):
             assert tester.test_cycle_freeness()
+
