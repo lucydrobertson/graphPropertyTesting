@@ -6,10 +6,11 @@ from DenseGraphs.denseGraph import DenseGraph
 
 
 class GraphGenerator:
-    def __init__(self, dense, directed):
+    def __init__(self, dense, directed, epsilon=1/6):
         # boolean: True for dense graph, false for bounded degree (sparse) graph
         self.dense = dense
         self.directed = directed
+        self.epsilon = epsilon
 
     # converts a list of edges to a dense graph
     def convert_to_dense(self, graph_size, graph_edges):
@@ -34,7 +35,7 @@ class GraphGenerator:
         p = random.uniform(0.5, 1)
         if self.dense:
             num_edges = int(p * size ** 2)
-        # for a sparse graph, have some p*nlogn edges
+        # for a sparse graph, have some p*n*log(n) edges
         else:
             num_edges = int(p * size * math.log2(size))
         return num_edges
@@ -101,6 +102,45 @@ class GraphGenerator:
             # arbitrarily set max_degree to 5*log2(size of graph)
             # TO DO: decide if this is a good choice, maybe it should be a parameter??
             return self.convert_to_bounded_degree(size, math.log2(size)*5, k_col_edges)
+
+    def generate_e_far_from_k_col_graph(self, size, k):
+        # similar idea to generating a k-col graph
+        # assign nodes to one of k sets and have edges between sets
+        # then create a number of violating edges which start and end in the same set
+        k_col_edges = []
+
+        node_sets = [[] for _ in range(0, k)]
+
+        # probabilistically assign nodes to one of the k sets
+        for x in range(0, size):
+            set_choice = random.randrange(0, k)
+            node_sets[set_choice].append(x)
+
+        num_edges = self.decide_num_edges(size)
+        # number of edges that would need to be removed to make the graph k-colourable
+        num_violating_edges = int(self.epsilon * size)
+
+        for _ in range(0, num_edges - num_violating_edges):
+            starting_set, ending_set = random.sample(node_sets, 2)
+            start_node = random.choice(starting_set)
+            ending_node = random.choice(ending_set)
+
+            k_col_edges.append((start_node, ending_node))
+
+        # create the violating edges, that start and end in the same node set
+        for _ in range(0, num_violating_edges):
+            set_choice = random.randrange(0, k)
+            start_edge = random.choice(node_sets[set_choice])
+            end_edge = random.choice(node_sets[set_choice])
+
+            k_col_edges.append((start_edge, end_edge))
+
+        if self.dense:
+            return self.convert_to_dense(size, k_col_edges)
+        else:
+            # arbitrarily set max_degree to 5*log2(size of graph)
+            # TO DO: decide if this is a good choice, maybe it should be a parameter??
+            return self.convert_to_bounded_degree(size, math.log2(size) * 5, k_col_edges)
 
     def generate_degree_regular_graph(self, size, degree):
         # basic idea

@@ -52,6 +52,20 @@ class TestGraphGenerator(TestCase):
                     break
             assert k_colourable
 
+    def test_generate_e_far_from_k_col_graph(self):
+        dense_generator = GraphGenerator(True, False)
+        dense_not_3_col_graph = dense_generator.generate_e_far_from_k_col_graph(10, 3)
+
+        dense_tester = DenseGraphTester(dense_not_3_col_graph, 1/3)
+        assert not dense_tester.test_k_colourability(3)
+
+        bounded_degree_generator = GraphGenerator(False, False)
+        sparse_not_k_col_graph = bounded_degree_generator.generate_e_far_from_k_col_graph(10, 3)
+        sparse_not_k_col_graph.visualise_graph()
+
+        bounded_degree_tester = BoundedDegreeGraphTester(sparse_not_k_col_graph, 1/3)
+        assert not bounded_degree_tester.test_sparse_k_colourability(3)
+
     def test_generate_degree_regular_graph(self):
         # ran this for 10,000 iterations, and it didn't fail so pretty sure the alg is correct (:
         chosen_degree = 12
