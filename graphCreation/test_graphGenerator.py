@@ -66,6 +66,19 @@ class TestGraphGenerator(TestCase):
         bounded_degree_tester = BoundedDegreeGraphTester(sparse_not_k_col_graph, 1/3)
         assert not bounded_degree_tester.test_sparse_k_colourability(3)
 
+    def test_generate_e_far_from_bipartite_graph(self):
+        dense_generator = GraphGenerator(True, False)
+        not_bpt_graph = dense_generator.generate_e_far_from_bipartite_graph(25)
+
+        dense_tester = DenseGraphTester(not_bpt_graph, 1/3)
+        assert dense_tester.test_bipartiteness()
+
+        bounded_degree_generator = GraphGenerator(False, False)
+        sparse_not_bpt_graph = bounded_degree_generator.generate_e_far_from_bipartite_graph(25)
+
+        bd_tester = BoundedDegreeGraphTester(sparse_not_bpt_graph, 1/3)
+        assert not bd_tester.test_bipartiteness()
+
     def test_generate_degree_regular_graph(self):
         # ran this for 10,000 iterations, and it didn't fail so pretty sure the alg is correct (:
         chosen_degree = 12

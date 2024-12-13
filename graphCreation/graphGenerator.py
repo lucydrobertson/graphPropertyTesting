@@ -142,6 +142,9 @@ class GraphGenerator:
             # TO DO: decide if this is a good choice, maybe it should be a parameter??
             return self.convert_to_bounded_degree(size, math.log2(size) * 5, k_col_edges)
 
+    def generate_e_far_from_bipartite_graph(self, size):
+        return self.generate_e_far_from_k_col_graph(size, 2)
+
     def generate_degree_regular_graph(self, size, degree):
         # basic idea
         # keep track of the current degree of every node
