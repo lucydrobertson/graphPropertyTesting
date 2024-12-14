@@ -145,7 +145,7 @@ class GraphGenerator:
     def generate_e_far_from_bipartite_graph(self, size):
         return self.generate_e_far_from_k_col_graph(size, 2)
 
-    def generate_degree_regular_graph(self, size, degree):
+    def generate_degree_regular_graph_edges(self, size, degree):
         # basic idea
         # keep track of the current degree of every node
         # add an edge between any two nodes that aren't yet of the correct degree
@@ -192,11 +192,37 @@ class GraphGenerator:
                             edges.append((e2, leftover_node))
                             # update degree of leftover node
                             node_degrees[leftover_node] += 2
+        return edges
 
-            if self.dense:
-                return self.convert_to_dense(size, edges)
-            else:
-                return self.convert_to_bounded_degree(size, degree, edges)
+    def generate_degree_regular_graph(self, size, degree):
+        edges = self.generate_degree_regular_graph_edges(size, degree)
+        if self.dense:
+            return self.convert_to_dense(size, edges)
+        else:
+            return self.convert_to_bounded_degree(size, degree, edges)
+
+    def generate_e_far_from_degree_regular_graph(self, size, degree):
+        # basic idea, generate degree regular graph
+        # then remove epsilon*n edges, and choose epsilon*n/d nodes called add
+        # for each node in add, add d edges to from it to some other random node
+        # until epsilon*n edges have been added
+        regular_graph_edges = self.generate_degree_regular_graph_edges(size, degree)
+
+        # removing epsilon * n edges from regular graph
+        for _ in range(0, int(self.epsilon * size / degree)):
+            regular_graph_edges.pop(random.randrange(0, len(regular_graph_edges)))
+
+        # adding in epsilon * n violating edges
+        add = random.sample(range(0, size), int(self.epsilon * size / degree))
+        for node in add:
+            # pick some other d nodes to add edges to from node
+            new_edges = [(node, neighbour) for neighbour in random.sample(range(0, size), degree)]
+            regular_graph_edges += new_edges
+
+        if self.dense:
+            return self.convert_to_dense(size, regular_graph_edges)
+        else:
+            return self.convert_to_bounded_degree(size, degree, regular_graph_edges)
 
     def generate_cycle_free_graph(self, size):
         # if dense, more children is fine, otherwise we want fewer children per node so just use the log value

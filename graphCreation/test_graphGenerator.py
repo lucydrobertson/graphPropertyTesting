@@ -89,6 +89,13 @@ class TestGraphGenerator(TestCase):
         for d in degrees:
             assert d == chosen_degree
 
+    def test_generate_e_far_from_degree_regular_graph(self):
+        e_far_from_reg_generator = GraphGenerator(True, False)
+        graph = e_far_from_reg_generator.generate_e_far_from_degree_regular_graph(25, 10)
+
+        tester = DenseGraphTester(graph, 1/6)
+        assert not tester.test_degree_regularity()
+
     def test_generate_cycle_free_graph(self):
         cycle_free_generator = GraphGenerator(False, False)
         graph = cycle_free_generator.generate_cycle_free_graph(25)
