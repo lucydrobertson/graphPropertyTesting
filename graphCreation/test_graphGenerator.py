@@ -106,3 +106,12 @@ class TestGraphGenerator(TestCase):
         for x in range(100):
             assert tester.test_cycle_freeness()
 
+    def test_generate_e_far_from_cycle_free_graph(self):
+        cycle_generator = GraphGenerator(False, False)
+        graph = cycle_generator.generate_e_far_from_cycle_free_graph(25)
+
+        graph.visualise_graph()
+
+        tester = BoundedDegreeGraphTester(graph, 1/3)
+        assert not tester.test_cycle_freeness()
+

@@ -259,3 +259,43 @@ class GraphGenerator:
             return self.convert_to_dense(size, edges)
         else:
             return self.convert_to_bounded_degree(size, max_children_per_node ** 2, edges)
+
+    def generate_e_far_from_cycle_free_graph(self, size):
+        # if dense, more children is fine, otherwise we want fewer children per node so just use the log value
+        if self.dense:
+            max_children_per_node = int(size / math.log(size, 2))
+        else:
+            max_children_per_node = int(math.log(size))
+
+        to_explore = [0]
+        edges = []
+        num_nodes_explored = 1
+        while len(to_explore) > 0 and num_nodes_explored < size * (1 - self.epsilon):
+            current_node = to_explore.pop(0)
+            num_children = random.randint(1, max_children_per_node)
+            if num_nodes_explored + num_children > size:
+                num_children = size - num_nodes_explored
+            children = [x for x in range(num_nodes_explored, num_nodes_explored + num_children)]
+            for child in children:
+                edges.append((current_node, child))
+            num_nodes_explored += num_children
+            to_explore += children
+
+        # for directed graphs, add in some upwards (towards root node) edges that will create cycles
+        # for undirected graphs, added edges can be upwards or downwards
+
+        num_violating_edges = int(self.epsilon * size)
+        narrowing_edges = []
+        for _ in range(0, num_violating_edges):
+            n1 = random.randint(0, size)
+            if self.directed:
+                n2 = random.randint(0, n1 - 1)
+            else:
+                n2 = random.randint(0, size)
+            narrowing_edges.append((n1, n2))
+        edges += narrowing_edges
+
+        if self.dense:
+            return self.convert_to_dense(size, edges)
+        else:
+            return self.convert_to_bounded_degree(size, max_children_per_node ** 2, edges)
