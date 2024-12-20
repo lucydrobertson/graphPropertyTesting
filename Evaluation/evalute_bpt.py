@@ -1,5 +1,6 @@
 from DenseGraphs.denseGraphTester import DenseGraphTester
-from Evaluation.evalutionHarness import EvaluationHarness
+from Evaluation.EvaluationHarness import EvaluationHarness
+from Evaluation.evalutor import Evaluator
 from graphCreation.graphGenerator import GraphGenerator
 
 if __name__ == "__main__":
@@ -7,9 +8,7 @@ if __name__ == "__main__":
     # then test it 100 times with a property tester
     # using the evaluation harness
 
-    bpt_graph = GraphGenerator(True, False, 1/8).generate_bipartite_graph(100)
-    tester = DenseGraphTester(bpt_graph, 1/8)
+    harness = EvaluationHarness([100], [1/3], False)
+    harness.evaluate_dense_bipartiteness_tester(100)
 
-    harness = EvaluationHarness(tester.test_bipartiteness)
-    harness.test_method(100)
 
