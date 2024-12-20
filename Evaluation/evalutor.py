@@ -30,20 +30,21 @@ class Evaluator:
             run_time = end_time - start_time
 
             runtime_total += run_time
-            if result:
+            if result and not self.epsilon_far:
                 num_successes += 1
             # if result == False and epsilon_far == True then we have a success because we are using the tester
             # on a graph that is epsilon far from having the property so it has correctly determined the result
-            elif self.epsilon_far:
+            elif not result and self.epsilon_far:
                 num_successes += 1
 
             # write out run to file
             self.file.write(f"{run_time},{result}\n")
 
-        print("\nStatistics:")
+        print("Statistics:")
         print(f"Number of iterations: {num_iterations}")
         print(f"Average runtime: {runtime_total / num_iterations}")
-        print(f"Success rate: {num_successes} out of {num_iterations}, {round(num_successes * 100 / num_iterations, 2)}%")
+        print(f"Success rate: {num_successes} out of {num_iterations}, "
+              f"{round(num_successes * 100 / num_iterations, 2)}%\n")
 
         self.close_file()
 

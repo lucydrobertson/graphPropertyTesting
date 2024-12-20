@@ -34,11 +34,45 @@ class EvaluationHarness:
                 not_bpt_evaluator = Evaluator(not_bpt_tester.test_bipartiteness, test_description, True)
                 not_bpt_evaluator.test_method(num_iterations)
 
-    def evaluate_dense_k_colourability_tester(self):
-        pass
+    def evaluate_dense_k_colourability_tester(self, num_iterations, k):
+        for size in self.graph_sizes:
+            for epsilon in self.epsilons:
+                graph_generator = GraphGenerator(True, self.directed, epsilon)
 
-    def evaluate_dense_degree_regularity_tester(self):
-        pass
+                # evaluate property tester on graph that is k-colourable
+                k_col_graph = graph_generator.generate_k_col_graph(size, k)
+                k_col_tester = DenseGraphTester(k_col_graph, epsilon)
+                test_description = f"Dense K-colourability tester evaluation on {k}-colourable graph of size {size}"
+                k_col_evaluator = Evaluator(lambda: k_col_tester.test_k_colourability(k), test_description, False)
+                k_col_evaluator.test_method(num_iterations)
+
+                # evaluate property tester on graph that is epsilon far from being k-colourable
+                not_k_col_graph = graph_generator.generate_e_far_from_k_col_graph(size, k)
+                not_k_col_tester = DenseGraphTester(not_k_col_graph, epsilon)
+                test_description = (f"Dense k-colourability tester evaluation on epsilon-far from "
+                                    f"{k}-colourable graph of size {size} with epsilon {round(epsilon, 2)}"
+                                    f" of size {size} with epsilon {round(epsilon, 2)}")
+                not_k_col_evaluator = Evaluator(lambda: not_k_col_tester.test_k_colourability(k), test_description, True)
+                not_k_col_evaluator.test_method(num_iterations)
+
+    def evaluate_dense_degree_regularity_tester(self, num_iterations, degree):
+        for size in self.graph_sizes:
+            for epsilon in self.epsilons:
+                graph_generator = GraphGenerator(True, self.directed, epsilon)
+
+                regular_graph = graph_generator.generate_degree_regular_graph(size, degree)
+                regularity_tester = DenseGraphTester(regular_graph, epsilon)
+                test_description = f"Dense degree regularity tester evaluation on regular graph of size {size}"
+                regular_evaluator = Evaluator(regularity_tester.test_degree_regularity, test_description, False)
+                regular_evaluator.test_method(num_iterations)
+
+                irregular_graph = graph_generator.generate_e_far_from_degree_regular_graph(size, degree)
+                irregularity_tester = DenseGraphTester(irregular_graph, epsilon)
+                irregular_test_description = (f"Dense degree regularity tester evaluation on epsilon far from regular"
+                                              f" graph of size {size} with epsilon {round(epsilon, 2)}")
+                irregular_evaluator = Evaluator(irregularity_tester.test_degree_regularity, irregular_test_description,
+                                                False)
+                irregular_evaluator.test_method(num_iterations)
 
     def evaluate_bounded_degree_bipartiteness_tester(self):
         pass

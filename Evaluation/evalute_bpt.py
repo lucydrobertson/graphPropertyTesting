@@ -8,7 +8,7 @@ if __name__ == "__main__":
     # then test it 100 times with a property tester
     # using the evaluation harness
 
-    harness = EvaluationHarness([100], [1/3], False)
+    harness = EvaluationHarness([100], [1/8], False)
     harness.evaluate_dense_bipartiteness_tester(100)
 
 
