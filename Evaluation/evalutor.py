@@ -15,6 +15,7 @@ class Evaluator:
             filename = tester_to_evaluate.__name__ + ":_" + datetime.datetime.now().strftime('%Y-%m-%d_%H:%M')
 
         print(filename)
+        print(test_description)
         self.file = open(filename, "w")
         self.file.write(test_description)
 
