@@ -174,6 +174,7 @@ class BoundedDegreeGraphTester:
             subgraph_vertices += self.get_vertices_in_radius(v, s2)
         subgraph_vertices = list(set(subgraph_vertices))
 
+        print(f"chose {len(subgraph_vertices)} vertices")
         subgraph = self.create_induced_subgraph(subgraph_vertices)
 
         # test if subgraph is k-colourable
