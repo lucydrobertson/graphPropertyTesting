@@ -77,82 +77,103 @@ class EvaluationHarness:
                 not_k_col_evaluator = Evaluator(e_far_filename, not_k_col_testers, e_far_test_description, True)
                 not_k_col_evaluator.test_method(num_iterations_per_graph)
 
-    def evaluate_dense_degree_regularity_tester(self, num_iterations, degree):
+    def evaluate_dense_degree_regularity_tester(self, num_iterations_per_graph, num_graphs_to_test, degree):
+        e_far_filename = ("dense_regularity_tester_epsilon_far:_" +
+                          datetime.datetime.now().strftime('%Y-%m-%d_%H:%M'))
+        prop_filename = "dense_regularity_tester:_" + datetime.datetime.now().strftime('%Y-%m-%d_%H:%M')
+
         for size in self.graph_sizes:
             for epsilon in self.epsilons:
                 graph_generator = GraphGenerator(True, self.directed, epsilon)
 
-                regular_graph = graph_generator.generate_degree_regular_graph(size, degree)
-                regularity_tester = DenseGraphTester(regular_graph, epsilon)
+                regularity_testers = [DenseGraphTester(graph_generator.generate_degree_regular_graph(size, degree),
+                                                       epsilon).test_degree_regularity
+                                      for _ in range(0, num_graphs_to_test)]
                 test_description = (f"Dense degree regularity tester evaluation on regular graph of size {size}"
-                                    f"using epsilon {round(epsilon, 2)}")
-                regular_evaluator = Evaluator(regularity_tester.test_degree_regularity, test_description, False)
-                regular_evaluator.test_method(num_iterations)
+                                    f"using epsilon {round(epsilon, 2)}\n")
+                regular_evaluator = Evaluator(prop_filename, regularity_testers, test_description, False)
+                regular_evaluator.test_method(num_iterations_per_graph)
 
-                irregular_graph = graph_generator.generate_e_far_from_degree_regular_graph(size, degree)
-                irregularity_tester = DenseGraphTester(irregular_graph, epsilon)
+                irregularity_testers = [DenseGraphTester(
+                    graph_generator.generate_e_far_from_degree_regular_graph(size,degree), epsilon)
+                                        .test_degree_regularity
+                                        for _ in range(0, num_graphs_to_test)]
                 irregular_test_description = (f"Dense degree regularity tester evaluation on epsilon far from regular"
-                                              f" graph of size {size} with epsilon {round(epsilon, 2)}")
-                irregular_evaluator = Evaluator(irregularity_tester.test_degree_regularity, irregular_test_description,
+                                              f" graph of size {size} with epsilon {round(epsilon, 2)}\n")
+                irregular_evaluator = Evaluator(e_far_filename, irregularity_testers, irregular_test_description,
                                                 False)
-                irregular_evaluator.test_method(num_iterations)
+                irregular_evaluator.test_method(num_iterations_per_graph)
 
-    def evaluate_bounded_degree_bipartiteness_tester(self, num_iterations):
+    def evaluate_bounded_degree_bipartiteness_tester(self, num_iterations_per_graph, num_graphs_to_test):
+        e_far_filename = ("bounded_degree_bipartiteness_tester_epsilon_far:_" +
+                          datetime.datetime.now().strftime('%Y-%m-%d_%H:%M'))
+        prop_filename = "bounded_degree_bipartiteness_tester:_" + datetime.datetime.now().strftime('%Y-%m-%d_%H:%M')
+
         for size in self.graph_sizes:
             for epsilon in self.epsilons:
                 graph_generator = GraphGenerator(False, self.directed, epsilon)
 
-                bpt_graph = graph_generator.generate_bipartite_graph(size)
-                bpt_tester = BoundedDegreeGraphTester(bpt_graph, epsilon)
+                bpt_testers = [BoundedDegreeGraphTester(graph_generator.generate_bipartite_graph(size), epsilon)
+                               .test_bipartiteness for _ in range(0, num_graphs_to_test)]
                 bpt_test_description = (f"Bounded-degree bipartiteness tester evaluation on bipartite graph "
-                                        f"of size {size} using epsilon {round(epsilon, 2)}")
-                bpt_evaluator = Evaluator(bpt_tester.test_bipartiteness, bpt_test_description, False)
-                bpt_evaluator.test_method(num_iterations)
+                                        f"of size {size} using epsilon {round(epsilon, 2)}\n")
+                bpt_evaluator = Evaluator(prop_filename, bpt_testers, bpt_test_description, False)
+                bpt_evaluator.test_method(num_iterations_per_graph)
 
-                not_bpt_graph = graph_generator.generate_e_far_from_bipartite_graph(size)
-                not_bpt_tester = BoundedDegreeGraphTester(not_bpt_graph, epsilon)
+                not_bpt_testers = [BoundedDegreeGraphTester(graph_generator.generate_e_far_from_bipartite_graph(size),
+                                                            epsilon)
+                                   .test_bipartiteness for _ in range(0, num_graphs_to_test)]
                 not_bpt_test_description = (f"Bounded-degree bipartiteness tester evaluation on epsilon far from "
-                                            f"bipartite graph of size {size} with epsilon {round(epsilon, 2)}")
-                not_bpt_evaluator = Evaluator(not_bpt_tester.test_bipartiteness, not_bpt_test_description, True)
-                not_bpt_evaluator.test_method(num_iterations)
+                                            f"bipartite graph of size {size} with epsilon {round(epsilon, 2)}\n")
+                not_bpt_evaluator = Evaluator(e_far_filename, not_bpt_testers, not_bpt_test_description, True)
+                not_bpt_evaluator.test_method(num_iterations_per_graph)
 
-    def evaluate_bounded_degree_k_colourability_tester(self, num_iterations, k):
+    def evaluate_bounded_degree_k_colourability_tester(self, num_iterations_per_graph, num_graphs_to_test, k):
+        e_far_filename = ("bounded_degree_k_colourability_tester_epsilon_far:_" +
+                          datetime.datetime.now().strftime('%Y-%m-%d_%H:%M'))
+        prop_filename = "bounded_degree_k_colourability_tester:_" + datetime.datetime.now().strftime('%Y-%m-%d_%H:%M')
+
         for size in self.graph_sizes:
             for epsilon in self.epsilons:
                 graph_generator = GraphGenerator(False, self.directed, epsilon)
 
-                k_col_graph = graph_generator.generate_k_col_graph(size, k)
-                k_col_tester = BoundedDegreeGraphTester(k_col_graph, epsilon)
+                k_col_testers = [lambda: BoundedDegreeGraphTester(graph_generator.generate_k_col_graph(size, k),
+                                                                  epsilon).test_sparse_k_colourability(k)
+                                 for _ in range(0, num_graphs_to_test)]
                 k_col_test_description = (f"Bounded-degree K-colourability tester evaluation on {k}-colourable graph"
-                                          f" of size {size} using epsilon {round(epsilon, 2)}")
-                k_col_evaluator = Evaluator(lambda: k_col_tester.test_sparse_k_colourability(k), k_col_test_description,
-                                            False)
-                k_col_evaluator.test_method(num_iterations)
+                                          f" of size {size} using epsilon {round(epsilon, 2)}\n")
+                k_col_evaluator = Evaluator(prop_filename, k_col_testers, k_col_test_description,False)
+                k_col_evaluator.test_method(num_iterations_per_graph)
 
-                not_k_col_graph = graph_generator.generate_e_far_from_k_col_graph(size, k)
-                not_k_col_tester = BoundedDegreeGraphTester(not_k_col_graph, epsilon)
+                not_k_col_testers = [lambda: BoundedDegreeGraphTester(graph_generator
+                                                                      .generate_e_far_from_k_col_graph(size, k),
+                                                                      epsilon).test_sparse_k_colourability(k)
+                                     for _ in range(0, num_graphs_to_test)]
                 not_k_col_test_description = (f"Bounded-degree k-colourability tester evaluation on epsilon-far from "
-                                              f"{k}-colourable graph of size {size} with epsilon {round(epsilon, 2)}")
-                not_k_col_evaluator = Evaluator(lambda: not_k_col_tester.test_sparse_k_colourability(k),
-                                                not_k_col_test_description, True)
-                not_k_col_evaluator.test_method(num_iterations)
+                                              f"{k}-colourable graph of size {size} with epsilon {round(epsilon, 2)}\n")
+                not_k_col_evaluator = Evaluator(e_far_filename, not_k_col_testers, not_k_col_test_description, True)
+                not_k_col_evaluator.test_method(num_iterations_per_graph)
 
-    def evaluate_bounded_degree_cycle_freeness_tester(self, num_iterations):
+    def evaluate_bounded_degree_cycle_freeness_tester(self, num_iterations_per_graph, num_graphs_to_test):
+        e_far_filename = ("bounded_degree_cycle_freeness_tester_epsilon_far:_" +
+                          datetime.datetime.now().strftime('%Y-%m-%d_%H:%M'))
+        prop_filename = "bounded_degree_cycle_freeness_tester:_" + datetime.datetime.now().strftime('%Y-%m-%d_%H:%M')
+
         for size in self.graph_sizes:
             for epsilon in self.epsilons:
                 graph_generator = GraphGenerator(False, self.directed, epsilon)
 
-                acyclic_graph = graph_generator.generate_cycle_free_graph(size)
-                acyclic_tester = BoundedDegreeGraphTester(acyclic_graph, epsilon)
+                acyclic_testers = [BoundedDegreeGraphTester(graph_generator.generate_cycle_free_graph(size), epsilon)
+                                  .test_cycle_freeness for _ in range(0, num_graphs_to_test)]
                 acyclic_test_description = (f"Bounded-degree cycle freeness tester evaluation on cycle-free graph"
-                                            f" of size {size} using epsilon {round(epsilon, 2)}")
-                acyclic_evaluator = Evaluator(acyclic_tester.test_cycle_freeness, acyclic_test_description,
-                                              False)
-                acyclic_evaluator.test_method(num_iterations)
+                                            f" of size {size} using epsilon {round(epsilon, 2)}\n")
+                acyclic_evaluator = Evaluator(prop_filename, acyclic_testers, acyclic_test_description, False)
+                acyclic_evaluator.test_method(num_iterations_per_graph)
 
-                cyclic_graph = graph_generator.generate_e_far_from_cycle_free_graph(size)
-                cyclic_tester = BoundedDegreeGraphTester(cyclic_graph, epsilon)
+                cyclic_testers = [BoundedDegreeGraphTester(graph_generator.generate_e_far_from_cycle_free_graph(size),
+                                                           epsilon)
+                                  .test_cycle_freeness for _ in range(0, num_graphs_to_test)]
                 cyclic_test_description = (f"Bounded-degree cycle freeness tester evaluation on epsilon far from "
-                                           f"cycle-free graph of size {size} with epsilon {round(epsilon, 2)}")
-                acyclic_evaluator = Evaluator(cyclic_tester.test_cycle_freeness, cyclic_test_description, True)
-                acyclic_evaluator.test_method(num_iterations)
+                                           f"cycle-free graph of size {size} with epsilon {round(epsilon, 2)}\n")
+                acyclic_evaluator = Evaluator(e_far_filename, cyclic_testers, cyclic_test_description, True)
+                acyclic_evaluator.test_method(num_iterations_per_graph)
