@@ -20,12 +20,14 @@ class EvaluationHarness:
     # which then creates a file of the results
     # then repeat for a graph that is e-far from having the property
     def evaluate_dense_bipartiteness_tester(self, num_iterations_per_graph, num_graphs_to_test):
-        e_far_filename = ("dense_bipartiteness_tester_epsilon_far:_" +
-                          datetime.datetime.now().strftime('%Y-%m-%d_%H:%M'))
-        prop_filename = "dense_bipartiteness_tester:_" + datetime.datetime.now().strftime('%Y-%m-%d_%H:%M')
 
         for size in self.graph_sizes:
             for epsilon in self.epsilons:
+                e_far_filename = (f"dense_bipartiteness_tester_epsilon_far_{size}_{epsilon}:_" +
+                                  datetime.datetime.now().strftime('%Y-%m-%d_%H:%M'))
+                prop_filename = (f"dense_bipartiteness_tester_{size}_{epsilon}:_" +
+                                 datetime.datetime.now().strftime('%Y-%m-%d_%H:%M'))
+
                 graph_generator = GraphGenerator(True, self.directed, epsilon)
 
                 bpt_testers = [DenseGraphTester(
@@ -49,12 +51,14 @@ class EvaluationHarness:
                 not_bpt_evaluator.test_method(num_iterations_per_graph)
 
     def evaluate_dense_k_colourability_tester(self, num_iterations_per_graph, num_graphs_to_test, k):
-        e_far_filename = ("dense_k_colourability_tester_epsilon_far:_" +
-                          datetime.datetime.now().strftime('%Y-%m-%d_%H:%M'))
-        prop_filename = "dense_k_colourability_tester:_" + datetime.datetime.now().strftime('%Y-%m-%d_%H:%M')
 
         for size in self.graph_sizes:
             for epsilon in self.epsilons:
+                e_far_filename = (f"dense_k_colourability_tester_epsilon_far_{size}_{epsilon}:_" +
+                                  datetime.datetime.now().strftime('%Y-%m-%d_%H:%M'))
+                prop_filename = (f"dense_k_colourability_tester_{size}_{epsilon}:_" +
+                                 datetime.datetime.now().strftime('%Y-%m-%d_%H:%M'))
+
                 graph_generator = GraphGenerator(True, self.directed, epsilon)
 
                 # evaluate property tester on graph that is k-colourable
@@ -63,7 +67,7 @@ class EvaluationHarness:
                                  for _ in range(0, num_graphs_to_test)]
                 prop_test_description = (
                     f"Dense K-colourability tester evaluation on {k}-colourable graph of size {size}"
-                    f"using epsilon {round(epsilon, 2)}\n")
+                    f" using epsilon {round(epsilon, 2)}\n")
                 k_col_evaluator = Evaluator(prop_filename, k_col_testers, prop_test_description, False)
                 k_col_evaluator.test_method(num_iterations_per_graph)
 
@@ -78,12 +82,14 @@ class EvaluationHarness:
                 not_k_col_evaluator.test_method(num_iterations_per_graph)
 
     def evaluate_dense_degree_regularity_tester(self, num_iterations_per_graph, num_graphs_to_test, degree):
-        e_far_filename = ("dense_regularity_tester_epsilon_far:_" +
-                          datetime.datetime.now().strftime('%Y-%m-%d_%H:%M'))
-        prop_filename = "dense_regularity_tester:_" + datetime.datetime.now().strftime('%Y-%m-%d_%H:%M')
 
         for size in self.graph_sizes:
             for epsilon in self.epsilons:
+                e_far_filename = (f"dense_regularity_tester_epsilon_far_{size}_{epsilon}:_" +
+                                  datetime.datetime.now().strftime('%Y-%m-%d_%H:%M'))
+                prop_filename = (f"dense_regularity_tester:__{size}_{epsilon}" +
+                                 datetime.datetime.now().strftime('%Y-%m-%d_%H:%M'))
+
                 graph_generator = GraphGenerator(True, self.directed, epsilon)
 
                 regularity_testers = [DenseGraphTester(graph_generator.generate_degree_regular_graph(size, degree),
@@ -105,12 +111,14 @@ class EvaluationHarness:
                 irregular_evaluator.test_method(num_iterations_per_graph)
 
     def evaluate_bounded_degree_bipartiteness_tester(self, num_iterations_per_graph, num_graphs_to_test):
-        e_far_filename = ("bounded_degree_bipartiteness_tester_epsilon_far:_" +
-                          datetime.datetime.now().strftime('%Y-%m-%d_%H:%M'))
-        prop_filename = "bounded_degree_bipartiteness_tester:_" + datetime.datetime.now().strftime('%Y-%m-%d_%H:%M')
 
         for size in self.graph_sizes:
             for epsilon in self.epsilons:
+                e_far_filename = (f"bounded_degree_bipartiteness_tester_epsilon_far_{size}_{epsilon}:_" +
+                                  datetime.datetime.now().strftime('%Y-%m-%d_%H:%M'))
+                prop_filename = (f"bounded_degree_bipartiteness_tester_{size}_{epsilon}:_" +
+                                 datetime.datetime.now().strftime('%Y-%m-%d_%H:%M'))
+
                 graph_generator = GraphGenerator(False, self.directed, epsilon)
 
                 bpt_testers = [BoundedDegreeGraphTester(graph_generator.generate_bipartite_graph(size), epsilon)
@@ -129,12 +137,14 @@ class EvaluationHarness:
                 not_bpt_evaluator.test_method(num_iterations_per_graph)
 
     def evaluate_bounded_degree_k_colourability_tester(self, num_iterations_per_graph, num_graphs_to_test, k):
-        e_far_filename = ("bounded_degree_k_colourability_tester_epsilon_far:_" +
-                          datetime.datetime.now().strftime('%Y-%m-%d_%H:%M'))
-        prop_filename = "bounded_degree_k_colourability_tester:_" + datetime.datetime.now().strftime('%Y-%m-%d_%H:%M')
 
         for size in self.graph_sizes:
             for epsilon in self.epsilons:
+                e_far_filename = (f"bounded_degree_k_colourability_tester_epsilon_far_{size}_{epsilon}:_" +
+                                  datetime.datetime.now().strftime('%Y-%m-%d_%H:%M'))
+                prop_filename = (f"bounded_degree_k_colourability_tester_{size}_{epsilon}:_" +
+                                 datetime.datetime.now().strftime('%Y-%m-%d_%H:%M'))
+
                 graph_generator = GraphGenerator(False, self.directed, epsilon)
 
                 k_col_testers = [lambda: BoundedDegreeGraphTester(graph_generator.generate_k_col_graph(size, k),
@@ -155,12 +165,14 @@ class EvaluationHarness:
                 not_k_col_evaluator.test_method(num_iterations_per_graph)
 
     def evaluate_bounded_degree_cycle_freeness_tester(self, num_iterations_per_graph, num_graphs_to_test):
-        e_far_filename = ("bounded_degree_cycle_freeness_tester_epsilon_far:_" +
-                          datetime.datetime.now().strftime('%Y-%m-%d_%H:%M'))
-        prop_filename = "bounded_degree_cycle_freeness_tester:_" + datetime.datetime.now().strftime('%Y-%m-%d_%H:%M')
 
         for size in self.graph_sizes:
             for epsilon in self.epsilons:
+                e_far_filename = (f"bounded_degree_cycle_freeness_tester_epsilon_far_{size}_{epsilon}:_" +
+                                  datetime.datetime.now().strftime('%Y-%m-%d_%H:%M'))
+                prop_filename = (f"bounded_degree_cycle_freeness_tester_{size}_{epsilon}:_" +
+                                 datetime.datetime.now().strftime('%Y-%m-%d_%H:%M'))
+
                 graph_generator = GraphGenerator(False, self.directed, epsilon)
 
                 acyclic_testers = [BoundedDegreeGraphTester(graph_generator.generate_cycle_free_graph(size), epsilon)

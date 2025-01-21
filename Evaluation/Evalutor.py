@@ -11,6 +11,8 @@ class Evaluator:
         self.filename = filename
         self.file = open(filename, "w")
         self.file.write(test_description)
+        print(filename)
+        print(test_description)
 
     def test_method(self, num_iterations):
         # test the method on the graph, write runtime and result to self.file as a csv
@@ -38,12 +40,18 @@ class Evaluator:
                 # write out run to file
                 self.file.write(f"{run_time},{result}\n")
 
+        # create statistics, print them then save them to the test results file
         print("Statistics:")
-        print(f"Number of iterations: {num_iterations}")
+
         total_iterations = num_iterations * len(self.testers_to_evaluate)
-        print(f"Average runtime: {runtime_total / total_iterations}")
-        print(f"Success rate: {num_successes} out of {total_iterations}, "
-              f"{round(num_successes * 100 / total_iterations, 2)}%\n")
+        avg_runtime_string = f"Average runtime: {runtime_total / total_iterations}\n"
+        print(avg_runtime_string)
+        self.file.write(avg_runtime_string)
+
+        success_rate_string = (f"Success rate: {num_successes} out of {total_iterations}, "
+                               f"{round(num_successes * 100 / total_iterations, 2)}%\n")
+        print(success_rate_string)
+        self.file.write(success_rate_string)
 
         self.close_file()
 

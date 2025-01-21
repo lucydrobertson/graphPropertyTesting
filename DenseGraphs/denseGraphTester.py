@@ -94,7 +94,10 @@ class DenseGraphTester:
         # choose k^2/e^3 * log(3k) vertices
         # create induced subgraph and check if the induced subgraph is k-col
         # if so then accept else reject
-        num_select = int(k**2 * math.log(3*k) / self.epsilon**3)
+        # GGR: num_select = int(k**2 * math.log(3*k) / self.epsilon**3)
+        # now using Alon:
+
+        num_select = int(k * math.log(k) / self.epsilon**2)
         vertices_chosen = self.select_vertices_from_graph(num_select)
         print("vertices chosen ", vertices_chosen)
         print(f"chose {num_select} vertices")
@@ -103,9 +106,16 @@ class DenseGraphTester:
         # test k-colourability of subgraph naively
         # generate each colouring and check if it's permissible
         subgraph_size = subgraph.get_size()
-        possible_colourings = generate_k_colourings(subgraph_size, k)
 
-        for colouring in possible_colourings:
+        for index in range(k ** subgraph_size):
+            colouring = [0] * subgraph_size
+            # convert the index (number of colouring) into an array representing that colouring
+            # aka convert the index from base 10 to base k
+            col_index = -1
+            while index > 0:
+                colouring[col_index] = index % k
+                index = index // k
+                col_index -= 1
             # check if colouring works
             if test_dense_colouring(subgraph, colouring):
                 return True

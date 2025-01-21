@@ -26,7 +26,6 @@ class GraphGenerator:
         graph = BoundedDegreeGraph(graph_size, max_degree, {}, self.directed)
         for edge in graph_edges:
             graph.add_neighbour(edge[0], edge[1])
-        print(graph.inc_func)
         return graph
 
     def decide_num_edges(self, size):

@@ -165,8 +165,8 @@ class BoundedDegreeGraphTester:
         # accept if the subgraph G induced by U satisfies the property
 
         # picked random constants for now
-        s1 = int(self.graph.get_size() / 2)
-        s2 = 2
+        s1 = int(1 / self.epsilon ** 2)
+        s2 = k
 
         vertices_chosen = self.choose_vertices(s1)
         subgraph_vertices = []
