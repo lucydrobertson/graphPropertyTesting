@@ -108,16 +108,17 @@ class BoundedDegreeGraphTester:
         vertices_chosen = self.choose_vertices(int(self.graph.get_size() / self.epsilon**3))
 
         max_exploration = 8 / (self.epsilon * self.graph.get_degree())
-        vertices_reached = []
+        # vertices reached (s, num_explored) stores the number of vertices explored starting from s
+        vertices_reached = {}
         for s in vertices_chosen:
-            cycle_found, vertices_explored = self.breadth_first_search_find_cycle(s, max_exploration)
+            cycle_found, num_vertices_explored = self.breadth_first_search_find_cycle(s, max_exploration)
             if cycle_found:
                 return False
             else:
-                vertices_reached.append(vertices_explored)
+                vertices_reached[s] = num_vertices_explored
 
         # max_explored_vertices consists of all vertices chosen that were part of component of max size explored
-        max_explored_vertices = list(filter(lambda n: n >= max_exploration, vertices_reached))
+        max_explored_vertices = [k for k in vertices_reached.keys() if vertices_reached[k] >= max_exploration]
         # degree_list stores the degrees of each vertex in max_explored_vertices
         degree_list = [len(self.graph.get_neighbours(v)) for v in max_explored_vertices]
 

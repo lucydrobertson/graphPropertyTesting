@@ -7,9 +7,9 @@ if __name__ == "__main__":
     # using the evaluation harness
 
     # problem: ran out of memory when trying to test on graphs of size 10000
-    # epsilon values used: [1/20, 1/10, 1/6, 1/4, 1/3]
+    # epsilon values used: [1/20, 1/10, 1/6, 1/4, 1/3] [25, 100, 250, 1000]
 
-    harness = EvaluationHarness([25, 100, 250, 1000], [1/6, 1/4, 1/3], False)
+    harness = EvaluationHarness([25, 100, 250, 1000], [1/20, 1/10, 1/6, 1/4, 1/3], False)
 
     # done: harness.evaluate_dense_bipartiteness_tester(3, 10)
     # done: harness.evaluate_dense_degree_regularity_tester(3, 10, 6)
@@ -33,5 +33,6 @@ if __name__ == "__main__":
     exit(0)
     """
 
+    # using epsilons [1/6, 1/4, 1/3]
     harness.evaluate_dense_k_colourability_tester(1, 1, 3)
     # harness.evaluate_bounded_degree_k_colourability_tester(1, 1, 3)
