@@ -3,6 +3,7 @@ from random import randrange, choice
 
 from BoundedDegreeGraphs.boundedDegreeGraph import BoundedDegreeGraph
 from create_k_colourings import generate_k_colourings
+from multiprocessing import Pool
 
 
 def test_bd_colouring(graph, colouring):
@@ -54,6 +55,12 @@ class BoundedDegreeGraphTester:
                 return True
         return False
 
+    def multiprocess_test_bipartiteness(self):
+        vertices_chosen = self.choose_vertices(int(self.graph.get_size() / self.epsilon))
+        with Pool() as p:
+            results = p.map(self.odd_cycle, vertices_chosen)
+        return True not in results
+
     def test_bipartiteness(self):
         # select vertices s O(1/e) times()
         # if odd-cycle(s) returns true then reject
@@ -67,8 +74,11 @@ class BoundedDegreeGraphTester:
                 return False
         return True
 
-    def breadth_first_search_find_cycle(self, starting_vertex, max_exploration):
-        # return cycle_found:bool, num_vertices_explored: int
+    def breadth_first_search_find_cycle(self, starting_vertex):
+        max_exploration = 8 / (self.epsilon * self.graph.get_degree())
+
+        # return num_vertices_explored: int
+        # if -1 is returned then that means a cycle has been found
         to_explore = [starting_vertex]
         explored = 0
 
@@ -91,10 +101,31 @@ class BoundedDegreeGraphTester:
             explored += 1
             if starting_vertex in neighbours:
                 # then we have found a cycle so return True
-                return True, explored
+                return -1
 
         # no cycle found so return False, number of vertices explored
-        return False, explored
+        return explored
+
+    def multiprocess_test_cycle_freeness(self):
+        vertices_chosen = self.choose_vertices(int(self.graph.get_size() / self.epsilon**3))
+
+        max_exploration = 8 / (self.epsilon * self.graph.get_degree())
+
+        # use Pool to search from multiple vertices concurrently
+        with Pool() as p:
+            num_vertices_explored = p.map(self.breadth_first_search_find_cycle, vertices_chosen)
+        if -1 in num_vertices_explored:
+            return False
+
+        # max_explored_vertices consists of all vertices chosen that were part of component of max size explored
+        max_explored_vertices = [vertices_chosen[i] for i in range(0, len(num_vertices_explored))
+                                 if num_vertices_explored[i] >= max_exploration]
+        # degree_list stores the degrees of each vertex in max_explored_vertices
+        degree_list = [len(self.graph.get_neighbours(v)) for v in max_explored_vertices]
+
+        N = len(max_explored_vertices)
+        M = 0.5 * sum(degree_list)
+        return (M - N)/len(vertices_chosen) < self.epsilon * self.graph.get_degree() / 16
 
     def test_cycle_freeness(self):
         # select l = O(1/e3) vertices
@@ -111,8 +142,8 @@ class BoundedDegreeGraphTester:
         # vertices reached (s, num_explored) stores the number of vertices explored starting from s
         vertices_reached = {}
         for s in vertices_chosen:
-            cycle_found, num_vertices_explored = self.breadth_first_search_find_cycle(s, max_exploration)
-            if cycle_found:
+            num_vertices_explored = self.breadth_first_search_find_cycle(s)
+            if num_vertices_explored == -1:
                 return False
             else:
                 vertices_reached[s] = num_vertices_explored
@@ -166,8 +197,8 @@ class BoundedDegreeGraphTester:
         # accept if the subgraph G induced by U satisfies the property
 
         # picked random constants for now
-        s1 = int(1 / self.epsilon ** 2)
-        s2 = k
+        s1 = int(1 / self.epsilon)
+        s2 = int(k / 2)
 
         vertices_chosen = self.choose_vertices(s1)
         subgraph_vertices = []

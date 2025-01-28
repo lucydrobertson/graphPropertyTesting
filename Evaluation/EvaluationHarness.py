@@ -189,3 +189,30 @@ class EvaluationHarness:
                                            f"cycle-free graph of size {size} with epsilon {round(epsilon, 2)}\n")
                 acyclic_evaluator = Evaluator(e_far_filename, cyclic_testers, cyclic_test_description, True)
                 acyclic_evaluator.test_method(num_iterations_per_graph)
+
+    def evaluate_multiprocess_bounded_degree_cycle_freeness_tester(self, num_iterations_per_graph, num_graphs_to_test):
+
+        for size in self.graph_sizes:
+            for epsilon in self.epsilons:
+                e_far_filename = (f"multiprocess_bounded_degree_cycle_freeness_tester_epsilon_far_{size}_{epsilon}:_" +
+                                  datetime.datetime.now().strftime('%Y-%m-%d_%H:%M'))
+                prop_filename = (f"multiprocess_bounded_degree_cycle_freeness_tester_{size}_{epsilon}:_" +
+                                 datetime.datetime.now().strftime('%Y-%m-%d_%H:%M'))
+
+                graph_generator = GraphGenerator(False, self.directed, epsilon)
+
+                acyclic_testers = [BoundedDegreeGraphTester(graph_generator.generate_cycle_free_graph(size), epsilon)
+                                  .multiprocess_test_cycle_freeness for _ in range(0, num_graphs_to_test)]
+                acyclic_test_description = (f"Multiprocess bounded-degree cycle freeness tester evaluation on "
+                                            f"cycle-free graph of size {size} using epsilon {round(epsilon, 2)}\n")
+                acyclic_evaluator = Evaluator(prop_filename, acyclic_testers, acyclic_test_description, False)
+                acyclic_evaluator.test_method(num_iterations_per_graph)
+
+                cyclic_testers = [BoundedDegreeGraphTester(graph_generator.generate_e_far_from_cycle_free_graph(size),
+                                                           epsilon)
+                                  .multiprocess_test_cycle_freeness for _ in range(0, num_graphs_to_test)]
+                cyclic_test_description = (f"Multiprocess bounded-degree cycle freeness tester evaluation on epsilon"
+                                           f"far from cycle-free graph of size {size} "
+                                           f"with epsilon {round(epsilon, 2)}\n")
+                acyclic_evaluator = Evaluator(e_far_filename, cyclic_testers, cyclic_test_description, True)
+                acyclic_evaluator.test_method(num_iterations_per_graph)

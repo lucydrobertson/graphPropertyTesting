@@ -44,6 +44,9 @@ class BoundedDegreeGraph:
     def get_degree(self):
         return self.degree
 
+    def increment_degree(self):
+        self.degree += 1
+
     def get_directed(self):
         return self.directed
 
