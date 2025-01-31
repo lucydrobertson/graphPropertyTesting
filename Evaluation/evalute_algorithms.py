@@ -31,8 +31,8 @@ if __name__ == "__main__":
     # done: harness.evaluate_multiprocess_bounded_degree_cycle_freeness_tester(3, 10)
 
     # size: [25, 100, 250, 1000], epsilon: [0.6, 0.7, 0.8, 0.9]
-    k_col_harness = EvaluationHarness([25],
-                                      [0.6],
+    k_col_harness = EvaluationHarness([25, 100, 250, 1000],
+                                      [0.6, 0.7, 0.8, 0.9],
                                       False)
     # done: k_col_harness.evaluate_dense_k_colourability_tester(3, 10, 3)
-    k_col_harness.evaluate_bounded_degree_k_colourability_tester(5, 10, 3)
+    k_col_harness.evaluate_bounded_degree_k_colourability_tester(3, 10, 3)

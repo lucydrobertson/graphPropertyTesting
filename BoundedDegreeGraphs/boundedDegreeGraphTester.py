@@ -4,15 +4,7 @@ from random import randrange, choice
 from BoundedDegreeGraphs.boundedDegreeGraph import BoundedDegreeGraph
 from create_k_colourings import generate_k_colourings
 from multiprocessing import Pool
-
-
-def test_bd_colouring(graph, colouring):
-    for v1 in range(0, graph.get_size()):
-        for v2 in range(0, graph.get_size()):
-            if v1 in graph.get_neighbours(v2) or v2 in graph.get_neighbours(v1):
-                if colouring[v1] == colouring[v2]:
-                    return False
-    return True
+from colouringTester import ColouringTester
 
 
 class BoundedDegreeGraphTester:
@@ -198,7 +190,7 @@ class BoundedDegreeGraphTester:
 
         # picked random constants for now
         s1 = int(1 / self.epsilon)
-        s2 = int(k / 2)
+        s2 = int(k / math.log(k))
 
         vertices_chosen = self.choose_vertices(s1)
         subgraph_vertices = []
@@ -213,7 +205,39 @@ class BoundedDegreeGraphTester:
         # generate all possible colourings of the subgraph
         # then check if any colouring is k-colourable
         possible_colourings = generate_k_colourings(subgraph.get_size(), k)
+        colourTester = ColouringTester(subgraph)
         for colouring in possible_colourings:
-            if test_bd_colouring(subgraph, colouring):
+            if colourTester.test_bd_colouring(colouring):
                 return True
         return False
+
+    def multiprocess_k_col(self, k):
+        # k-colourability tester that works on sparse bounded degree graphs
+        # sample a set S of s1 vertices at random
+        # for each v in S, Uv = D(v, s2)
+        # where D(v, i) is all vertices at distance <= i from v
+        # then U = union of the Uv's
+        # accept if the subgraph G induced by U satisfies the property
+
+        # picked random constants for now
+        s1 = int(1 / self.epsilon)
+        s2 = int(k / math.log(k))
+
+        vertices_chosen = self.choose_vertices(s1)
+        subgraph_vertices = []
+        for v in vertices_chosen:
+            subgraph_vertices += self.get_vertices_in_radius(v, s2)
+        subgraph_vertices = list(set(subgraph_vertices))
+
+        print(f"chose {len(subgraph_vertices)} vertices")
+        subgraph = self.create_induced_subgraph(subgraph_vertices)
+
+        # test if subgraph is k-colourable
+        # generate all possible colourings of the subgraph
+        # then check if any colouring is k-colourable
+        possible_colourings = generate_k_colourings(subgraph.get_size(), k)
+        colourTester = ColouringTester(subgraph)
+        with Pool() as p:
+            colouring_outcomes = p.map(colourTester.test_bd_colouring, possible_colourings)
+        if False in colouring_outcomes:
+            return False
