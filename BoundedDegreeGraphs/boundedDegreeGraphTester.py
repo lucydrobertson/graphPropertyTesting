@@ -175,8 +175,8 @@ class BoundedDegreeGraphTester:
     def create_induced_subgraph(self, subgraph_vertices):
         # return an induced subgraph that only includes the vertices present in subgraph_vertices
         incidence_function = {}
-        for vertex in range(0, len(subgraph_vertices)):
-            neighbours = self.graph.get_neighbours(subgraph_vertices[vertex])
+        for vertex in subgraph_vertices:
+            neighbours = self.graph.get_neighbours(vertex)
             # filter neighbours so the list only includes neighbours present in the subgraph
             neighbours = [n for n in neighbours if n in subgraph_vertices]
             # use vertex as dictionary key so that subgraph vertices are labelled 0, 1, 2, ...

@@ -150,6 +150,7 @@ class EvaluationHarness:
                 k_col_testers = [lambda: BoundedDegreeGraphTester(graph_generator.generate_k_col_graph(size, k),
                                                                   epsilon).test_sparse_k_colourability(k)
                                  for _ in range(0, num_graphs_to_test)]
+                print("All k-col graphs generated")
                 k_col_test_description = (f"Bounded-degree K-colourability tester evaluation on {k}-colourable graph"
                                           f" of size {size} using epsilon {round(epsilon, 2)}\n")
                 k_col_evaluator = Evaluator(prop_filename, k_col_testers, k_col_test_description,False)
@@ -159,6 +160,7 @@ class EvaluationHarness:
                                                                       .generate_e_far_from_k_col_graph(size, k),
                                                                       epsilon).test_sparse_k_colourability(k)
                                      for _ in range(0, num_graphs_to_test)]
+                print("All e-far from k-col graphs generated")
                 not_k_col_test_description = (f"Bounded-degree k-colourability tester evaluation on epsilon-far from "
                                               f"{k}-colourable graph of size {size} with epsilon {round(epsilon, 2)}\n")
                 not_k_col_evaluator = Evaluator(e_far_filename, not_k_col_testers, not_k_col_test_description, True)
