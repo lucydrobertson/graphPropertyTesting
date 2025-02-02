@@ -36,7 +36,8 @@ class BoundedDegreeGraph:
                 raise ValueError("The degree of vertex {vertex} is already bounded by the graph's maximum degree")
 
         except KeyError:
-            raise KeyError(f"The vertex {vertex}  or its neighbour {new_neighbour} is not present in the incidence function")
+            raise KeyError(f"The vertex {vertex}  or its neighbour {new_neighbour} is not present"
+                           f" in the incidence function")
 
     def get_size(self):
         return self.size

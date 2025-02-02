@@ -15,7 +15,7 @@ def assign_nodes_to_set(size, k):
     return node_sets
 
 
-def generate_degree_regular_graph_edges(self, size, degree):
+def generate_degree_regular_graph_edges(size, degree):
     # basic idea
     # keep track of the current degree of every node
     # add an edge between any two nodes that aren't yet of the correct degree
@@ -88,8 +88,10 @@ class GraphGenerator:
             try:
                 graph.add_neighbour(edge[0], edge[1])
             except ValueError:
-                graph.increment_degree()
-                graph.add_neighbour(edge[0], edge[1])
+                # get rid of the edge, because we don't have enough room
+                continue
+                # graph.increment_degree()
+                # graph.add_neighbour(edge[0], edge[1])
         return graph
 
     def decide_num_edges(self, size):
@@ -164,7 +166,7 @@ class GraphGenerator:
         else:
             # arbitrarily set max_degree to 5*log2(size of graph)
             # TO DO: decide if this is a good choice, maybe it should be a parameter??
-            return self.convert_to_bounded_degree(size, math.log2(size)*5*k, k_col_edges)
+            return self.convert_to_bounded_degree(size, int(k * math.log(k) + 1), k_col_edges)
 
     def generate_e_far_from_k_col_graph(self, size, k):
         # similar idea to generating a k-col graph
@@ -200,7 +202,8 @@ class GraphGenerator:
         else:
             # arbitrarily set max_degree to 5*log2(size of graph)
             # TO DO: decide if this is a good choice, maybe it should be a parameter??
-            return self.convert_to_bounded_degree(size, math.log2(size) * 5 * k, k_col_edges)
+            random.shuffle(k_col_edges)
+            return self.convert_to_bounded_degree(size, int(k * math.log(k) + 1), k_col_edges)
 
     def generate_e_far_from_bipartite_graph(self, size):
         return self.generate_e_far_from_k_col_graph(size, 2)

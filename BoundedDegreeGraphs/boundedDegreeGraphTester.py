@@ -4,7 +4,7 @@ from random import randrange, choice
 from BoundedDegreeGraphs.boundedDegreeGraph import BoundedDegreeGraph
 from create_k_colourings import generate_k_colourings
 from multiprocessing import Pool
-from colouringTester import ColouringTester
+from BoundedDegreeGraphs.colouringTester import ColouringTester
 
 
 class BoundedDegreeGraphTester:
@@ -22,7 +22,8 @@ class BoundedDegreeGraphTester:
     def odd_cycle(self, v):
         n = self.graph.get_size()
         # perform k random walks of length l
-        l = int(math.log(n) / self.epsilon)
+        # reduce l by a factor of 10 as the runtime was ridiculous, and the algorithm only specified l = poly(log n / e)
+        l = int((math.log(n) / self.epsilon) / 10)
         k = int(math.sqrt(n) * l)
 
         reached_from_even = []
@@ -33,7 +34,12 @@ class BoundedDegreeGraphTester:
             current_vertex = v
             for path_length in range(1, l + 1):
                 # randomly select next vertex from neighbours
-                current_vertex = choice(self.graph.get_neighbours(current_vertex))
+                try:
+                    current_vertex = choice(self.graph.get_neighbours(current_vertex))
+                # If the current vertex has no neighbours then stop walking
+                except IndexError:
+                    break
+
                 # add next hop vertex to reached from even or odd arrays, depending on path length
                 if path_length % 2 == 0:
                     reached_from_even.append(current_vertex)
@@ -48,7 +54,7 @@ class BoundedDegreeGraphTester:
         return False
 
     def multiprocess_test_bipartiteness(self):
-        vertices_chosen = self.choose_vertices(int(self.graph.get_size() / self.epsilon))
+        vertices_chosen = self.choose_vertices(int(1 / self.epsilon))
         with Pool() as p:
             results = p.map(self.odd_cycle, vertices_chosen)
         return True not in results
@@ -60,7 +66,7 @@ class BoundedDegreeGraphTester:
         # perform k walks starting from s of length l
         # return found if some vertex v is reached from s on both an odd and even length path
 
-        vertices_chosen = self.choose_vertices(int(self.graph.get_size() / self.epsilon))
+        vertices_chosen = self.choose_vertices(int(1 / self.epsilon))
         for vertex in vertices_chosen:
             if self.odd_cycle(vertex):
                 return False
@@ -190,6 +196,7 @@ class BoundedDegreeGraphTester:
 
         # picked random constants for now
         s1 = int(1 / self.epsilon)
+        # ideally s2 would be sth like k / log k, but my computer can't handle that as it often picks 20+ vertices
         s2 = int(k / math.log(k))
 
         vertices_chosen = self.choose_vertices(s1)
@@ -197,6 +204,10 @@ class BoundedDegreeGraphTester:
         for v in vertices_chosen:
             subgraph_vertices += self.get_vertices_in_radius(v, s2)
         subgraph_vertices = list(set(subgraph_vertices))
+
+        # remove me later!
+        if len(subgraph_vertices) > 14:
+            subgraph_vertices = subgraph_vertices[:14]
 
         print(f"chose {len(subgraph_vertices)} vertices")
         subgraph = self.create_induced_subgraph(subgraph_vertices)
