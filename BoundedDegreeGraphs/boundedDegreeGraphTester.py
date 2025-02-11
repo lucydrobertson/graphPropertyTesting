@@ -252,3 +252,40 @@ class BoundedDegreeGraphTester:
             colouring_outcomes = p.map(colourTester.test_bd_colouring, possible_colourings)
         if False in colouring_outcomes:
             return False
+
+    def test_expansion(self, alpha):
+        # repeat s = 48/e times
+        # perform m walks of length l starting from some vertex v
+        # count the number of endpoint collision
+        # is num collision > (1 + 7e)/n * (mC2) then reject else accept
+        # m = 12 * s * sqrt(n) / e**2
+        # l = 16 * d**2 * ln(n/e) / a**2
+
+        s = int(48 / self.epsilon)
+        n = self.graph.get_size()
+        m = int(12 * s * math.sqrt(n) / self.epsilon**2)
+        l = int(16 * self.graph.get_degree()**2 * math.log(n/self.epsilon) / alpha**2)
+
+        for _ in range(0, s):
+            # pick a random vertex v
+            v = choice(range(0, n))
+            # perform m walks of length l from v
+            endpoints = {}
+            for _ in range(0, m):
+                # random walk of length l
+                current_vertex = v
+                for _ in range(0, l):
+                    current_vertex = choice(self.graph.get_neighbours(current_vertex))
+                # increment endpoint counter by 1
+                # if endpoint counter > 1 for any vertex then there's a collision
+                try:
+                    endpoints[current_vertex] += 1
+                except KeyError:
+                    endpoints[current_vertex] = 1
+            # if collisions > max allowed then reject
+            max_allowed_collisions = (1 + 7*self.epsilon) / n * math.comb(m, 2)
+            num_collisions = endpoints.values()
+            for c in num_collisions:
+                if c > max_allowed_collisions:
+                    return False
+        return True
