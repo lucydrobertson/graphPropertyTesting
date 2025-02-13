@@ -274,12 +274,9 @@ class BoundedDegreeGraphTester:
 
         # pick s random vertices
         vertices_chosen = self.choose_vertices(s)
-        print(vertices_chosen)
 
         # calculate max number of collisions allowed
         max_allowed_collisions = int((1 + 0.5 * (n ** (lmda / -2)) * math.comb(m, 2)) / n)
-        # max_allowed_collisions = int((1 + 7 * self.epsilon * math.comb(m, 2)) / n)
-        print("max allowed: ", max_allowed_collisions)
 
         for v in vertices_chosen:
             # perform m walks of length l from v
@@ -302,7 +299,6 @@ class BoundedDegreeGraphTester:
                     endpoints[current_vertex] = 1
             # if collisions > max allowed then reject
             num_collisions = endpoints.values()
-            print(num_collisions)
             for c in num_collisions:
                 if c > max_allowed_collisions:
                     return False
