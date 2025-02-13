@@ -24,6 +24,12 @@ class TestBoundedDegreeGraph(TestCase):
         assert directed_bd_graph.get_neighbours(1) == [0, 2]
         assert directed_bd_graph.get_neighbours(2) == [0]
 
+        # ensure that new neighbours get added if adding new vertices to graph
+        small_graph = BoundedDegreeGraph(3, 3, {0: [1, 2], 1: [0], 2: [0]}, False)
+        small_graph.add_neighbour(3, 4)
+        assert small_graph.get_neighbours(3) == [4]
+        assert small_graph.get_neighbours(4) == [3]
+
     def test_get_size(self):
         # test that graph size returned matches expected value
         bd_graph = BoundedDegreeGraph(3, 3, {0: [1, 2], 1: [0], 2: [0]}, False)

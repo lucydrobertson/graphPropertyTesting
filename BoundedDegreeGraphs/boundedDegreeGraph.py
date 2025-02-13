@@ -25,7 +25,7 @@ class BoundedDegreeGraph:
         try:
             # add in the new neighbour to an undirected graph
             # iff both the vertex and the new neighbour have space
-            if (len(self.inc_func[vertex]) < self.degree and len(self.inc_func[new_neighbour]) <
+            if (len(self.get_neighbours(vertex)) < self.degree and len(self.get_neighbours(new_neighbour)) <
                     self.degree and not self.directed):
                 self.inc_func[new_neighbour].append(vertex)
                 self.inc_func[vertex].append(new_neighbour)

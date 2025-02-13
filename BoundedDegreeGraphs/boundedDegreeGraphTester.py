@@ -261,16 +261,25 @@ class BoundedDegreeGraphTester:
         # m = 12 * s * sqrt(n) / e**2
         # l = 16 * d**2 * ln(n/e) / a**2
 
+        # lmda parameter controls number of walks, and max number of allowed collision
+        # it is set to 0.05 in the Goldreich and Ron paper
+        lmda = 0.05
+
         s = int(1 / self.epsilon)
         n = self.graph.get_size()
-        m = int(n**0.05 * math.sqrt(n) / self.epsilon)
+        m = int(n**lmda * math.sqrt(n) / self.epsilon)
         l = int(1.5 * math.log(n) / math.log(1 / alpha))
+
+        print(f"Performing {m} walks of length {l}")
 
         # pick s random vertices
         vertices_chosen = self.choose_vertices(s)
+        print(vertices_chosen)
 
         # calculate max number of collisions allowed
-        max_allowed_collisions = int((1 + 0.5 * (n ** -0.025) * math.comb(m, 2)) / n)
+        max_allowed_collisions = int((1 + 0.5 * (n ** (lmda / -2)) * math.comb(m, 2)) / n)
+        # max_allowed_collisions = int((1 + 7 * self.epsilon * math.comb(m, 2)) / n)
+        print("max allowed: ", max_allowed_collisions)
 
         for v in vertices_chosen:
             # perform m walks of length l from v
@@ -279,7 +288,12 @@ class BoundedDegreeGraphTester:
                 # random walk of length l
                 current_vertex = v
                 for _ in range(0, l):
-                    current_vertex = choice(self.graph.get_neighbours(current_vertex))
+                    try:
+                        current_vertex = choice(self.graph.get_neighbours(current_vertex))
+                    except IndexError:
+                        print("got stuck on ", v)
+                        break
+
                 # increment endpoint counter by 1
                 # if endpoint counter > 1 for any vertex then there's a collision
                 try:
