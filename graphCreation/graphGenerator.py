@@ -313,3 +313,17 @@ class GraphGenerator:
             return self.convert_to_dense(size, edges)
         else:
             return self.convert_to_bounded_degree(size, max_children_per_node ** 2, edges)
+
+    def generate_fully_connected_graph(self, size):
+        vertices = [k for k in range(0, size)]
+        edges = []
+
+        for v1 in vertices:
+            for v2 in vertices:
+                if v1 != v2:
+                    edges.append((v1, v2))
+
+        if self.dense:
+            return self.convert_to_dense(size, edges)
+        else:
+            return self.convert_to_bounded_degree(size, size, edges)

@@ -2,6 +2,7 @@ from unittest import TestCase
 
 from BoundedDegreeGraphs.boundedDegreeGraph import BoundedDegreeGraph
 from BoundedDegreeGraphs.boundedDegreeGraphTester import BoundedDegreeGraphTester
+from graphCreation.graphGenerator import GraphGenerator
 
 
 class TestBoundedDegreeGraphTester(TestCase):
@@ -102,3 +103,12 @@ class TestBoundedDegreeGraphTester(TestCase):
         not_three_col_bd_graph = BoundedDegreeGraph(6, 5, {0: [1, 4, 5], 1: [0, 2, 4, 5], 2: [1, 3, 4], 3: [2, 4], 4: [0, 1, 2, 3, 5], 5: [0, 1, 4]}, False)
         not_kcol_tester = BoundedDegreeGraphTester(not_three_col_bd_graph, 1/6)
         assert not not_kcol_tester.test_sparse_k_colourability(3)
+
+    def test_test_expansion(self):
+        expander_graph = GraphGenerator(False, False).generate_fully_connected_graph(30)
+        expander_tester = BoundedDegreeGraphTester(expander_graph, 1/3)
+        assert expander_tester.test_expansion(1/4)
+
+        not_expander_graph = BoundedDegreeGraph(6, 4, {0: [1, 4, 5], 1: [0, 2, 4], 2: [1, 3], 3: [2, 4], 4: [0, 1, 3, 5], 5: [0, 4]}, False)
+        not_expander_tester = BoundedDegreeGraphTester(not_expander_graph, 1/3)
+        assert not not_expander_tester.test_expansion(1/4)
