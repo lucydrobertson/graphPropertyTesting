@@ -212,7 +212,7 @@ class BoundedDegreeGraphTester:
         # generate all possible colourings of the subgraph
         # then check if any colouring is k-colourable
         possible_colourings = generate_k_colourings(subgraph.get_size(), k)
-        colourTester = ColouringTester(subgraph)
+        colourTester = ColouringTester(subgraph, k)
         for colouring in possible_colourings:
             if colourTester.test_bd_colouring(colouring):
                 return True
@@ -242,10 +242,10 @@ class BoundedDegreeGraphTester:
         # test if subgraph is k-colourable
         # generate all possible colourings of the subgraph
         # then check if any colouring is k-colourable
-        possible_colourings = generate_k_colourings(subgraph.get_size(), k)
-        colourTester = ColouringTester(subgraph)
+        possible_colourings_indices = [x for x in range(0, k**n)]
+        colourTester = ColouringTester(subgraph, k)
         with Pool() as p:
-            colouring_outcomes = p.map(colourTester.test_bd_colouring, possible_colourings)
+            colouring_outcomes = p.map(colourTester.test_bd_colouring_by_index, possible_colourings_indices)
         if False in colouring_outcomes:
             return False
 
