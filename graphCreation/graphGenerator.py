@@ -243,7 +243,7 @@ class GraphGenerator:
         if self.dense:
             max_children_per_node = int(size / math.log(size, 2))
         else:
-            max_children_per_node = int(math.log(size))
+            max_children_per_node = int(math.log(size, 2))
 
         to_explore = [0]
         edges = []

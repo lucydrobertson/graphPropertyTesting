@@ -205,10 +205,6 @@ class BoundedDegreeGraphTester:
             subgraph_vertices += self.get_vertices_in_radius(v, s2)
         subgraph_vertices = list(set(subgraph_vertices))
 
-        # remove me later!
-        if len(subgraph_vertices) > 14:
-            subgraph_vertices = subgraph_vertices[:14]
-
         print(f"chose {len(subgraph_vertices)} vertices")
         subgraph = self.create_induced_subgraph(subgraph_vertices)
 

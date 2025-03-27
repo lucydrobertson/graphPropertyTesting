@@ -29,6 +29,8 @@ def get_stats_from_file(filename):
                 has_property = False
             else:
                 epsilon = line1_tokens[i + 1]
+        elif line1_tokens[i] == "epsilon-far":
+            has_property = False
 
     # get average runtime and success rate
     runtime_line = lines[-3]
@@ -44,7 +46,7 @@ def get_stats_from_file(filename):
 def get_all_stats(filenames, results_filename):
     results = [get_stats_from_file(f) for f in filenames]
     r_file = open(results_filename, "w")
-    r_file.write("size, epsilon, average_runtime, success_rate, has_property\n")
+    r_file.write("size,epsilon,average_runtime,success_rate,has_property\n")
     for r in results:
         r_file.write(r)
     r_file.close()
