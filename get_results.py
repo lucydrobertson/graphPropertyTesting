@@ -1,6 +1,8 @@
+import math
 from lib2to3.fixes.fix_tuple_params import tuple_name
 from os import listdir
 from os.path import isfile, join
+from statistics import mean, stdev
 
 
 def get_filenames(folder):
@@ -8,6 +10,20 @@ def get_filenames(folder):
     mypath = dirpath + folder
     only_files = [mypath + f for f in listdir(mypath) if isfile(join(mypath, f))]
     return only_files
+
+
+def calculate_confidence_interval(results):
+    # calculate a 95% confidence interval for these results
+    results_mean = mean(results)
+    results_stdev = stdev(results)
+
+    # z-value for a 95% confidence interval is 1.96
+    z = 1.96
+    # formula: mean +- z * stdev / sqrt(n) where n is the number of results
+    difference = z * results_stdev / math.sqrt(len(results))
+    low = results_mean - difference
+    high = results_mean + difference
+    return low, high
 
 
 def get_stats_from_file(filename):
@@ -31,6 +47,14 @@ def get_stats_from_file(filename):
                 epsilon = line1_tokens[i + 1]
         elif line1_tokens[i] == "epsilon-far":
             has_property = False
+        elif line1_tokens[i] == "epsilonfar":
+            has_property = False
+
+    results = []
+    for result_line in lines[2:-3]:
+        results.append(float(result_line.split(",")[0]))
+
+    confidence_interval = calculate_confidence_interval(results)
 
     # get average runtime and success rate
     runtime_line = lines[-3]
@@ -39,14 +63,15 @@ def get_stats_from_file(filename):
     success_rate_line = lines[-2]
     success_rate = success_rate_line.split(", ")[1][:-1]
 
-    stats_line = f"{size},{epsilon},{runtime},{success_rate},{has_property}\n"
+    stats_line = f"{size},{epsilon},{runtime},{confidence_interval[0]},{confidence_interval[1]},{success_rate},{has_property}\n"
     return stats_line
 
 
 def get_all_stats(filenames, results_filename):
     results = [get_stats_from_file(f) for f in filenames]
     r_file = open(results_filename, "w")
-    r_file.write("size,epsilon,average_runtime,success_rate,has_property\n")
+    r_file.write("size,epsilon,average_runtime,average_runtime_confidence_low,average_runtime_confidence_high,"
+                 "success_rate,has_property\n")
     for r in results:
         r_file.write(r)
     r_file.close()
