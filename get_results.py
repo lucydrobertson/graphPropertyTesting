@@ -21,9 +21,7 @@ def calculate_confidence_interval(results):
     z = 1.96
     # formula: mean +- z * stdev / sqrt(n) where n is the number of results
     difference = z * results_stdev / math.sqrt(len(results))
-    low = results_mean - difference
-    high = results_mean + difference
-    return low, high
+    return difference
 
 
 def get_stats_from_file(filename):
@@ -63,15 +61,14 @@ def get_stats_from_file(filename):
     success_rate_line = lines[-2]
     success_rate = success_rate_line.split(", ")[1][:-1]
 
-    stats_line = f"{size},{epsilon},{runtime},{confidence_interval[0]},{confidence_interval[1]},{success_rate},{has_property}\n"
+    stats_line = f"{size},{epsilon},{runtime},{confidence_interval},{success_rate},{has_property}\n"
     return stats_line
 
 
 def get_all_stats(filenames, results_filename):
     results = [get_stats_from_file(f) for f in filenames]
     r_file = open(results_filename, "w")
-    r_file.write("size,epsilon,average_runtime,average_runtime_confidence_low,average_runtime_confidence_high,"
-                 "success_rate,has_property\n")
+    r_file.write("size,epsilon,average_runtime,average_runtime_confidence,success_rate,has_property\n")
     for r in results:
         r_file.write(r)
     r_file.close()
