@@ -84,7 +84,7 @@ if __name__ == "__main__":
                              ("Multiprocess_BoundedDegree_Bipartiteness_Tester/", "MP_BD_BPT_results.csv"),
                              ("Multiprocess_BoundedDegree_Cycle_Freeness_Tester/", "MP_BD_CycleFreeness_results.csv")]
 
-    results_path = "/home/lucy/Desktop/University/graphPropertyTesting/Evaluation/"
+    results_path = "/Evaluation/"
 
     for (folder_name, results_filename) in tester_filename_pairs:
         files = get_filenames(folder_name)

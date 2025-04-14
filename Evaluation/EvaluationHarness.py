@@ -282,3 +282,21 @@ class EvaluationHarness:
                                            f"with epsilon {round(epsilon, 2)}\n")
                 acyclic_evaluator = Evaluator(e_far_filename, cyclic_testers, cyclic_test_description, True)
                 acyclic_evaluator.test_method(num_iterations_per_graph)
+
+    def evaluate_expander_tester(self, expander_graph, num_iterations, alphas):
+        expander_directory = self.results_directory + "/Expander_Tester"
+        os.mkdir(expander_directory)
+
+        for alpha in alphas:
+            for epsilon in self.epsilons:
+                expander_filename = expander_directory + f"/expander_tester_alpha_{alpha}_{round(epsilon, 2)}.csv"
+
+                expander_test_description = (f"Expander tester evaluation on real-world social network graph "
+                                             f"with alpha {alpha} using epsilon {round(epsilon, 2)}\n")
+
+                expander_tester = BoundedDegreeGraphTester(expander_graph, epsilon)
+                expander_evaluator = Evaluator(expander_filename,
+                                               [lambda: expander_tester.test_expansion(alpha)],
+                                               expander_test_description, False)
+                expander_evaluator.test_method(num_iterations)
+

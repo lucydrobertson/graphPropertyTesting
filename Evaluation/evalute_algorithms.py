@@ -1,5 +1,6 @@
 from Evaluation.EvaluationHarness import EvaluationHarness
 import math
+from graphCreation.FacebookNetwork import get_facebook_graph
 
 
 # code to calculate how many vertices chosen for dense k-col subgraph tests
@@ -21,8 +22,13 @@ if __name__ == "__main__":
     # problem: ran out of memory when trying to test on graphs of size 10000
     # epsilon values used: [1/20, 1/10, 1/6, 1/4, 1/3] [25, 100, 250, 1000]
 
-    harness = EvaluationHarness([25, 100, 250, 1000], [1/20, 1/10, 1/6, 1/4, 1/3], False)
-    
+    # harness = EvaluationHarness([25, 100, 250, 1000], [1/20, 1/10, 1/6, 1/4, 1/3], False)
+
+    facebook_graph = get_facebook_graph()
+    expander_harness = EvaluationHarness([25, 100, 250, 1000], [1/100, 1/50, 1/20, 1/10, 1/6, 1/4, 1/3], False)
+    expander_harness.evaluate_expander_tester(facebook_graph, 50, [1/10, 1/5, 1/4, 1/3])
+
+    """    
     harness.evaluate_dense_bipartiteness_tester(3, 10)
     harness.evaluate_dense_degree_regularity_tester(3, 10, 6)
     harness.evaluate_bounded_degree_cycle_freeness_tester(3, 10)
@@ -34,3 +40,4 @@ if __name__ == "__main__":
     k_col_harness = EvaluationHarness([100, 250, 1000], [0.6, 0.7, 0.8, 0.9], False)
     k_col_harness.evaluate_dense_k_colourability_tester(3, 10, 3)
     k_col_harness.evaluate_bounded_degree_k_colourability_tester(3, 10, 3)
+    """

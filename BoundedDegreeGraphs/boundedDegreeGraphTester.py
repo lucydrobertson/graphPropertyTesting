@@ -266,7 +266,7 @@ class BoundedDegreeGraphTester:
         m = int(n**lmda * math.sqrt(n) / self.epsilon)
         l = int(1.5 * math.log(n) / math.log(1 / alpha))
 
-        print(f"Performing {m} walks of length {l}")
+        # print(f"Performing {m} walks of length {l}")
 
         # pick s random vertices
         vertices_chosen = self.choose_vertices(s)

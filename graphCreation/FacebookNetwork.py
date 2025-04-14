@@ -5,7 +5,7 @@ from BoundedDegreeGraphs.boundedDegreeGraphTester import BoundedDegreeGraphTeste
 
 
 def import_edges():
-    edge_file = open("facebook_edges.txt", "r")
+    edge_file = open("/home/lucy/Desktop/University/graphPropertyTesting/graphCreation/facebook_edges.txt", "r")
     edges = edge_file.read().split("\n")
 
     clean_edges = []
@@ -13,8 +13,6 @@ def import_edges():
         edge = edge_line.split(" ")
         if len(edge) > 1:
             clean_edges.append((int(edge[0]), int(edge[1])))
-        else:
-            print("Not an edge between two nodes: ", edge)
 
     return clean_edges
 
@@ -32,8 +30,12 @@ def convert_edges_to_bounded_degree_graph(edge_list):
             graph.add_neighbour(edge[0], edge[1])
 
     graph.size = len(graph.inc_func.keys())
-    print("size ", graph.get_size())
     return graph
+
+
+def get_facebook_graph():
+    edges = import_edges()
+    return convert_edges_to_bounded_degree_graph(edges)
 
 
 if __name__ == "__main__":
