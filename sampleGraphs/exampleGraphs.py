@@ -21,5 +21,3 @@ dense_bipartite_graph = dense_graph_creator(
     [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 0], [1, 4]],
     True
 )
-tester = DenseGraphTester(dense_bipartite_graph, 1/6)
-print(tester.test_bipartiteness())
