@@ -16,7 +16,6 @@ def assign_nodes_to_set(size, k):
 
 
 def generate_degree_regular_graph_edges(size, degree):
-    # basic idea
     # keep track of the current degree of every node
     # add an edge between any two nodes that aren't yet of the correct degree
     # repeat until every node is of the max degree or there is only one node left (failure??)
@@ -108,8 +107,6 @@ class GraphGenerator:
     def generate_bipartite_graph(self, size):
         # generate |size| nodes and probabilistically assign them to set a or set b
         # then generate some k * |size|**2 number of edges connecting the two sets
-        # idea: maybe have some parameter for degree regularity or some standard deviation from it?
-        # idea: have the probability of assignment to set a or b as a new parameter?
 
         # create an empty graph of size |size|
         bpt_graph_edges = []
@@ -138,8 +135,6 @@ class GraphGenerator:
         if self.dense:
             return self.convert_to_dense(size, bpt_graph_edges)
         else:
-            # arbitrarily set max_degree to 5*log2(size of graph)
-            # TO DO: decide if this is a good choice, maybe it should be a parameter??
             return self.convert_to_bounded_degree(size, math.log2(size)*5, bpt_graph_edges)
 
     def generate_k_col_graph(self, size, k):
@@ -164,8 +159,6 @@ class GraphGenerator:
         if self.dense:
             return self.convert_to_dense(size, k_col_edges)
         else:
-            # arbitrarily set max_degree to 5*log2(size of graph)
-            # TO DO: decide if this is a good choice, maybe it should be a parameter??
             return self.convert_to_bounded_degree(size, int(k * math.log(k) + 1), k_col_edges)
 
     def generate_e_far_from_k_col_graph(self, size, k):
@@ -200,8 +193,6 @@ class GraphGenerator:
         if self.dense:
             return self.convert_to_dense(size, k_col_edges)
         else:
-            # arbitrarily set max_degree to 5*log2(size of graph)
-            # TO DO: decide if this is a good choice, maybe it should be a parameter??
             random.shuffle(k_col_edges)
             return self.convert_to_bounded_degree(size, int(k * math.log(k) + 1), k_col_edges)
 
@@ -216,7 +207,7 @@ class GraphGenerator:
             return self.convert_to_bounded_degree(size, degree, edges)
 
     def generate_e_far_from_degree_regular_graph(self, size, degree):
-        # basic idea, generate degree regular graph
+        # generate degree regular graph
         # then remove epsilon*n edges, and choose epsilon*n/d nodes called add
         # for each node in add, add d edges to from it to some other random node
         # until epsilon*n edges have been added

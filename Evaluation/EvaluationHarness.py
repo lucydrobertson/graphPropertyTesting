@@ -8,11 +8,6 @@ import datetime
 
 from sampleGraphs.exampleGraphs import dense_bipartite_graph
 
-
-# idea! have evaluator take in an array of graph property testers, so that it can run on that array
-# will simplify the whole process, but still pass in filename as it's cleaner
-
-
 class EvaluationHarness:
     def __init__(self, graph_sizes, epsilon_values, directed):
         self.graph_sizes = graph_sizes  # [10, 25, 100, 250, 1000]
